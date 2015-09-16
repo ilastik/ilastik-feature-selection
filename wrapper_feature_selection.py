@@ -410,7 +410,7 @@ class FeatureSelection(object):
 
         best_not_changed_in = 0
         while (best_not_changed_in <= overshoot):
-            print("current best set: %s with score %f"%(str(best_set), score_of_best_set))
+            logger.info("current best set: %s with score %f"%(str(best_set), score_of_best_set))
             next_node, open_list, open_scores, closed_list = pick_next_node(open_list, open_scores, closed_list)
             new_children = expand_node(next_node, open_list, closed_list, n_features)
             new_scores = obtain_scores_of_children(new_children, indices)
