@@ -9,13 +9,21 @@ from sklearn import cross_validation
 def load_iris():
     tmp = datasets.load_iris()
     data = np.array(tmp['data'])
+    n_samples = data.shape[0]
+    permIndexes=np.random.permutation(n_samples)
+    data = data[permIndexes]
     target = np.array(tmp['target'])
+    target = target[permIndexes]
     return data, target
 
 def load_digits():
     tmp = datasets.load_digits()
     data = np.array(tmp['data'])
+    n_samples = data.shape[0]
+    permIndexes=np.random.permutation(n_samples)
+    data = data[permIndexes]
     target = np.array(tmp['target'])
+    target = target[permIndexes]
     return data, target
 
 def kfold_train_and_predict(X, Y, classifier, k = 5, indices = None, features = None):
