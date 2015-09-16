@@ -400,6 +400,7 @@ class FeatureSelection(object):
         else:
             score_of_current_set = self._evaluation_function(X, Y, indices, initial_feature_set)
 
+        # initialize open and closed lists
         open_list = [initial_feature_set]
         open_scores = [score_of_current_set]
         closed_list = []
@@ -411,20 +412,33 @@ class FeatureSelection(object):
         best_not_changed_in = 0
         while (best_not_changed_in <= overshoot):
             logger.info("current best set: %s with score %f"%(str(best_set), score_of_best_set))
+            # - retrieve the best node from the open list,
+            # - remove the corresponding entry from the open_list and open_scores,
+            # - add the retrieved node to the closed list
             next_node, open_list, open_scores, closed_list = pick_next_node(open_list, open_scores, closed_list)
+
+            # - find all valid expansions of that node (search feature search space for adding features; remove each
+            # feature in turn form the node)
+            # - valid expansions are those that result in nodes which are not already in the either the open_list
+            # or closed_list
             new_children = expand_node(next_node, open_list, closed_list, n_features)
+
+            # calculate the evaluation function for all children
             new_scores = obtain_scores_of_children(new_children, indices)
 
+            # add all children and their score to the respective lists
             open_list += new_children
             open_scores += new_scores
 
-            if len(new_scores) == 0: # if there are only few features (iris dataset) then there may be no possible
-            # expansions to a node. In that case jump to the next best noxe
+            if len(new_scores) == 0: # if there are only few features (iris dataset) then there may be no valid
+            # expansions to a node. In that case jump to the next best node
                 best_not_changed_in += 1
                 continue
 
             id_of_best_child = np.argmax(new_scores)
             continue_compound = False
+
+            # update best set if such a set is found
             if new_scores[id_of_best_child] > (score_of_best_set + epsilon):
                 best_set = new_children.pop(id_of_best_child)
                 score_of_best_set = new_scores.pop(id_of_best_child)
@@ -434,24 +448,31 @@ class FeatureSelection(object):
             else:
                 best_not_changed_in += 1
 
+            # continue only to compound search if 1) it has been activated by the user, 2) the best_set has been updated
+            # AND 3) there was more than one child in the new_children list (>0 because one child has already been
+            # popped form the list)
             while(do_compound_operators & continue_compound & (len(new_scores) > 0)):
-                # find second best set
+                # find second best set (best one has already been removed)
                 id_of_best_child = np.argmax(new_scores)
                 best_child = new_children.pop(id_of_best_child)
                 best_child_score = new_scores.pop(id_of_best_child)
 
-                #find out operation that led to child
+                #find out operation that led to child (f. ex: '+ feature 5' or '- feature 3')
                 modified_feature = best_child.symmetric_difference(next_node)
                 if len(best_child) < len(next_node):
                     operation = -1
                 else:
                     operation = +1
+
+                # create new child with compound operators
                 compound_child = self.apply_operation_to_feature_set(best_set, list(modified_feature)[0], operation)
 
                 if len(compound_child) < 1:
                     break
                 if (compound_child in open_list) or (compound_child in closed_list):
                     break
+
+                # if compound_child is valid then evaluate it and add it to the lists
                 score_of_compound_child = self._evaluation_function(X, Y, indices, compound_child)
 
                 open_list += [compound_child]
@@ -463,5 +484,5 @@ class FeatureSelection(object):
                     logger.info("updated best node thanks to compound operators")
                 else:
                     continue_compound = False
-        # IPython.embed()
+
         return np.sort(list(best_set)), score_of_best_set
