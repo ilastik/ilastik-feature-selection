@@ -433,6 +433,7 @@ class FeatureSelection(object):
             if len(new_scores) == 0: # if there are only few features (iris dataset) then there may be no valid
             # expansions to a node. In that case jump to the next best node
                 best_not_changed_in += 1
+                logger.info("The feature set has not been updated in the last %d iterations"%best_not_changed_in)
                 continue
 
             id_of_best_child = np.argmax(new_scores)
@@ -447,6 +448,7 @@ class FeatureSelection(object):
                 logger.info("updated best feature set: %s \t score: %f"%(str(best_set), score_of_best_set))
             else:
                 best_not_changed_in += 1
+                logger.info("The feature set has not been updated in the last %d iterations"%best_not_changed_in)
 
             # continue only to compound search if 1) it has been activated by the user, 2) the best_set has been updated
             # AND 3) there was more than one child in the new_children list (>0 because one child has already been

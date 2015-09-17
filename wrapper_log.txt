@@ -1,2 +1,10 @@
-wrapper_feature_selection - INFO - updated best feature set: set([2]) 	 score: 1.233333
-wrapper_feature_selection - INFO - updated best feature set: set([3]) 	 score: 1.253333
+wrapper_feature_selection - INFO - current best set: set([0, 2]) with score 1.126667
+wrapper_feature_selection - INFO - updated best feature set: set([2]) 	 score: 1.213333
+wrapper_feature_selection - INFO - current best set: set([2]) with score 1.213333
+wrapper_feature_selection - INFO - The feature set has not been updated in the last 1 iterations
+wrapper_feature_selection - INFO - current best set: set([2]) with score 1.213333
+wrapper_feature_selection - INFO - The feature set has not been updated in the last 2 iterations
+wrapper_feature_selection - INFO - current best set: set([2]) with score 1.213333
+wrapper_feature_selection - INFO - The feature set has not been updated in the last 3 iterations
+wrapper_feature_selection - INFO - current best set: set([2]) with score 1.213333
+wrapper_feature_selection - INFO - The feature set has not been updated in the last 4 iterations

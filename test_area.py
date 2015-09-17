@@ -13,4 +13,4 @@ feat_selector = wrapper_feature_selection.FeatureSelection(eval_fct.evaluate_fea
 X, Y = utils.load_iris()
 # feat_selector.sequential_feature_selection(X, Y, direction = "backward")
 
-feat_selector.best_first_search(X, Y, do_compound_operators=True, initial_feature_set=set([0,2]))
+print feat_selector.best_first_search(X, Y, do_compound_operators=True, initial_feature_set=set([0,2]), feature_search_space=set([0,1,2]))
