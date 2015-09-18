@@ -1,0 +1,6 @@
+filter_feature_selection - INFO - Initialize filter feature selection:
+filter_feature_selection - INFO - using filter method: CIFE
+filter_feature_selection - INFO - Best feature found was 3 with J_eval= 1.371997. Feature set was []
+filter_feature_selection - INFO - Best feature found was 2 with J_eval= 0.052697. Feature set was [3]
+filter_feature_selection - INFO - Best feature found was 0 with J_eval= 0.033762. Feature set was [3, 2]
+filter_feature_selection - INFO - Best feature found was 1 with J_eval= 0.152873. Feature set was [3, 2, 0]

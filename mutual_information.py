@@ -3,12 +3,13 @@ __author__ = 'fabian'
 
 import numpy as np
 
-def normalize_data(X1):
-    X1 = np.array(X1)
-    X1 -= np.min(X1)
-    if X1.std() != 0:
-        X1 /= np.std(X1)
-    return X1
+def normalize_data_for_MI(X):
+    for i in xrange(X.shape[1]):
+        std = X[:, i].std()
+        if std != 0.:
+            X[:, i] /= std
+            X[:, i] -= X[:, i].min()
+    return X
 
 def calculate_mutual_information_histogram_binning(X1, X2, base = 2.):
     if len(X1)!=(len(X2)):
