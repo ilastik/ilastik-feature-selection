@@ -163,7 +163,7 @@ class FeatureSelection(object):
         if constant_feature_ids is None:
             constant_feature_ids = set([])
         if feature_search_space is None:
-            feature_search_space = set(list(np.arange(n_features)))
+            feature_search_space = set(list(np.arange(n_features))).difference(constant_feature_ids)
 
         if direction == "forward":
             if initial_feature_set is None:
@@ -172,7 +172,7 @@ class FeatureSelection(object):
             set_operation = 1
         else:
             if initial_feature_set is None:
-                initial_feature_set = set(list(np.arange(n_features)))
+                initial_feature_set = set(list(np.arange(n_features))).difference(constant_feature_ids)
             remaining_features = set([])
             set_operation = -1
 
@@ -376,7 +376,7 @@ class FeatureSelection(object):
         if constant_feature_ids is None:
             constant_feature_ids = set([])
         if feature_search_space is None:
-            feature_search_space = set(list(np.arange(n_features)))
+            feature_search_space = set(list(np.arange(n_features))).difference(constant_feature_ids)
         if initial_feature_set is None:
             initial_feature_set = set([])
 
