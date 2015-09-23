@@ -172,7 +172,7 @@ class FeatureSelection(object):
             set_operation = 1
         else:
             if initial_feature_set is None:
-                initial_feature_set = set(list(np.arange(n_features))).difference(constant_feature_ids)
+                initial_feature_set = set(feature_search_space.difference(constant_feature_ids))
             remaining_features = set([])
             set_operation = -1
 
@@ -183,7 +183,7 @@ class FeatureSelection(object):
 
         # init feature set must be a subset of the feature search space
         if feature_search_space.intersection(initial_feature_set) != initial_feature_set:
-            raise AttributeError("initial_feature_set mus be a subset of feature_search_space")
+            raise AttributeError("initial_feature_set must be a subset of feature_search_space")
 
         # constant features cannot be in the feature_search_space
         if len(feature_search_space.intersection(constant_feature_ids)) != 0:
@@ -487,4 +487,4 @@ class FeatureSelection(object):
                 else:
                     continue_compound = False
 
-        return np.sort(list(best_set)), score_of_best_set
+        return np.sort(list(best_set.union(constant_feature_ids))), score_of_best_set
