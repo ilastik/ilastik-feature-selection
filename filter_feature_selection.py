@@ -15,7 +15,7 @@ fhandler.setFormatter(formatter)
 logger.addHandler(fhandler)
 
 class FilterFeatureSelection(object):
-    def __init__(self, X, Y, method):
+    def __init__(self, X, Y, method = "ICAP"):
         """
         This class provides easy access to mutual information based filter feature selection.
         The default mutual information estimation algorithm used is the histogram binning method. If a more

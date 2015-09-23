@@ -1,0 +1,19 @@
+wrapper_feature_selection - INFO - current best feature set set([])
+wrapper_feature_selection - INFO - curr set is now: set([34])
+wrapper_feature_selection - INFO - local best score is 0.661983, overall best score is -9999999999.900000
+wrapper_feature_selection - INFO - current best feature set set([34])
+wrapper_feature_selection - INFO - curr set is now: set([34, 30])
+wrapper_feature_selection - INFO - local best score is 0.780935, overall best score is 0.661983
+wrapper_feature_selection - INFO - current best feature set set([34, 30])
+wrapper_feature_selection - INFO - curr set is now: set([34, 43, 30])
+wrapper_feature_selection - INFO - local best score is 0.885956, overall best score is 0.780935
+wrapper_feature_selection - INFO - current best feature set set([34, 43, 30])
+wrapper_feature_selection - INFO - curr set is now: set([34, 43, 26, 30])
+wrapper_feature_selection - INFO - local best score is 0.997683, overall best score is 0.885956
+wrapper_feature_selection - INFO - current best feature set set([34, 43, 26, 30])
+wrapper_feature_selection - INFO - curr set is now: set([34, 43, 26, 30, 61])
+wrapper_feature_selection - INFO - local best score is 1.088273, overall best score is 0.997683
+wrapper_feature_selection - INFO - current best feature set set([34, 43, 26, 30, 61])
+wrapper_feature_selection - INFO - curr set is now: set([34, 10, 43, 26, 61, 30])
+wrapper_feature_selection - INFO - local best score is 1.168271, overall best score is 1.088273
+wrapper_feature_selection - INFO - current best feature set set([34, 10, 43, 26, 30, 61])
