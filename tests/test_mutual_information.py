@@ -4,7 +4,7 @@ import sys
 sys.path.append("../")
 import numpy as np
 import ctypes as c
-import mutual_information
+import mutual_information_old
 import utils
 import unittest
 import logging
@@ -82,27 +82,27 @@ class TestMutualInformation(unittest.TestCase):
 
     def test_mutual_info_calculation(self):
         X, Y = utils.load_digits()
-        X = mutual_information.normalize_data_for_MI(X)
+        X = mutual_information_old.normalize_data_for_MI(X)
         for i in range(X.shape[1]):
             for j in range(i+1, X.shape[1]):
                 X1 = np.array(X[:,i])
                 X2 = np.array(X[:,j])
                 mi_pyfeast = self.__calculate_MI(X1, X2)
-                mi_ours = mutual_information.calculate_mutual_information_histogram_binning(X1, X2)
+                mi_ours = mutual_information_old.calculate_mutual_information_histogram_binning(X1, X2)
                 logger.debug("mutual_info: features: %d and %d; pyfeast: %f \t ours: %f"%(i, j, mi_pyfeast, mi_ours))
                 self.assertTrue(np.isclose(mi_pyfeast, mi_ours, rtol=0.01, atol=0.00001))
 
     def test_cond_mutual_info(self):
         X, Y = utils.load_digits()
         Y = Y.astype("int")
-        X = mutual_information.normalize_data_for_MI(X)
+        X = mutual_information_old.normalize_data_for_MI(X)
         for i in range(X.shape[1]):
             for j in range(i+1, X.shape[1]):
                 X1 = np.array(X[:,i])
                 X2 = np.array(X[:,j])
 
                 cond_mi_pyfeast = self.__calculate_cond_MI(X1, X2, Y)
-                cond_mi_ours = mutual_information.calculate_conditional_MI(X1, X2, Y)
+                cond_mi_ours = mutual_information_old.calculate_conditional_MI(X1, X2, Y)
                 logger.debug("class cond mutual info: features: %d and %d; pyfeast: %f \t ours: %f"%(i, j, cond_mi_pyfeast, cond_mi_ours))
                 self.assertTrue(np.isclose(cond_mi_pyfeast, cond_mi_ours, rtol=0.01, atol=0.00001))
 

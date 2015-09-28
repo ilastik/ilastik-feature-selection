@@ -9,7 +9,7 @@ def normalize_data_for_MI(X):
         if std != 0.:
             X[:, i] /= std
             X[:, i] -= X[:, i].min()
-    return X
+    return np.floor(X).astype("int")
 
 def calculate_mutual_information_histogram_binning(X1, X2, base = 2.):
     if len(X1)!=(len(X2)):

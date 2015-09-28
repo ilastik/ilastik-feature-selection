@@ -19,13 +19,13 @@ logger.addHandler(fhandler)
 
 
 class EvaluationFunction(object):
-    def __init__(self, classifier, k_fold = 5, complexity_penalty = 0.05):
+    def __init__(self, classifier, k_fold=5, complexity_penalty=0.05):
         self._classifier = classifier
         self._k_fold = k_fold
         self._complexity_penalty = complexity_penalty
 
     @staticmethod
-    def kfold_train_and_predict(X, Y, classifier, k = 5, indices = None, features = None):
+    def kfold_train_and_predict(X, Y, classifier, k=5, indices=None, features=None):
         """
         Performs a k-fold cross-validation on the data and returns the average accuracy on the test set as well as its
         standard deviation
@@ -74,21 +74,59 @@ class EvaluationFunction(object):
         return score
 
 
-class FeatureSelection(object):
-    def __init__(self, evaluation_function):
+class WrapperFeatureSelection(object):
+    def __init__(self, X, Y, evaluation_function, method="SFS"):
         """
         This class performs wrapper feature selection. It requires an evaluation function for evaluating feature sets
+
+        :param X:                   (n_samples by n_features) numpy array containing the data
+        :param Y:                   (n_samples) numpy array containing target labels
         :param evaluation_function: must have interface evaluation_function(X, Y, indices, feature_set). Can
                                     theoretically be anything but it makes sense to use a k-fold cross-validation using
                                     the desired classifier and the feature_set on the samples indicated ny indices. The
                                     evaluation score may use the test set accuracy of the cross-validation runs or a
                                     related measure (f.ex.: accuracy penalized by feature set size). See
                                     EvaluationFunction.evaluate_feature_set_size_penalty as an example
-        :return:
+        :param method:              Determines the search method that is applied:
+                                    - "SFS":  sequential forward selection. Start either with an empty or a user defined
+                                            feature set and sequentially add the feature that maximises the evaluation
+                                            function to that set.
+                                    - "SBE":  sequential backward elimination: Start either with a set contianing all
+                                            features or a user defined feature set and sequentially eliminate the
+                                            feature whose elimination yields the highest score using the evaluation
+                                            function.
+                                    - "BFS":  priority queue-like search algorithm. The initial (default:empty) feature
+                                            set is expanded to all yet undiscovered children by adding/removing single
+                                            features. All children and their score are saved. In each iteration, the
+                                            child with the highest score is selected and expanded.
         """
+        if X.shape[0] != len(Y):
+            raise ValueError("X and Y must have have same amount of samples")
+        self._X = X
+        self._Y = Y
         self._evaluation_function = evaluation_function
+        self.change_method(method)
 
-    def apply_operation_to_feature_set(self, feature_set, feature_id, operation):
+    def change_method(self, method):
+        """
+        :param method:      Determines the search method that is applied:
+                            - "SFS":  sequential forward selection. Start either with an empty or a user defined
+                                    feature set and sequentially add the feature that maximises the evaluation
+                                    function to that set.
+                            - "SBE":  sequential backward elimination: Start either with a set contianing all
+                                    features or a user defined feature set and sequentially eliminate the
+                                    feature whose elimination yields the highest score using the evaluation
+                                    function.
+                            - "BFS":  priority queue-like search algorithm. The initial (default:empty) feature
+                                    set is expanded to all yet undiscovered children by adding/removing single
+                                    features. All children and their score are saved. In each iteration, the
+                                    child with the highest score is selected and expanded.
+        """
+        if method not in ["SFS", "SBE", "BFS"]:
+            raise ValueError("method can only be either SFS (sequential forward selection), SBE (sequential backward elimination) or BFS (best first search)")
+        self._method = method
+
+    def __apply_operation_to_feature_set(self, feature_set, feature_id, operation):
         """ Modifies a feature set by adding (operation = 1) or removing (operation = -1) the feature specified by
         feature_id form the feature_set
 
@@ -113,40 +151,59 @@ class FeatureSelection(object):
                 feature_set.remove(feature_id)
         return feature_set
 
-    def sequential_feature_selection(self, X, Y, indices = None, direction = "forward", do_floating_search = True, initial_feature_set = None,
-                                     constant_feature_ids = None, feature_search_space = None, overshoot = 3, epsilon = 0.):
+    def run(self, **kwargs):
         """
-        Description here... TODO
-
-        Examples
-
-        :param X:           (n_samples, n_features) numpy array containing the data
-        :param Y:           1-d array containing the corresponding labels (length n_samples)
-        :param indices:     integer array containing the indices that are used for feature selection.
-                            Default value None: all indices will be used
-        :param direction:   may be "forward" (sequential forward selection (SFS)) or "backward" (sequential backward
-                            elimination (SBE))
-        :param do_floating_search:      determines whether floating search methods will be applied. See [Pudil et al.
-                                        1994] for more info
-        :param initial_feature_set:     set of feature ids to start the search with.
+        Runs the wrapper feature selection.
+        :param kwargs:
+            indices=None:               integer array containing the indices that are used for feature selection.
+                                        Default value None: all indices will be used
+            do_advanced_search=False:   SFS/SBE : enables/disables floating search (see Pudil1994). Floating search will
+                                        allow a more dynamic search and eventually yield better feature sets at the cost
+                                        of a higher runtime
+                                        BFS : enables/disables compound operators (see Kohavi1997). If your dataset has
+                                        few redundant features then enabling these will speed up the feature selection
+            initial_features=None:      set of feature ids to start the search with.
                                         Default value None: SFS: empty feature set
                                                             SBE: full feature set (all features)
-        :param constant_feature_ids:    set of feature ids that is always included and will not be modified by the
-                                        selection process. Default value None: empty set
-        :param feature_search_space:    set of feature ids that specify which feature ids will be searched for
-                                        adding/removing features. Default value None: all features
-        :param overshoot:   amount of iterations to continue running although no improvement over the evaluation
-                            function could be achieved. Increasing this number may help overcome potential local minima.
-                            Default value: 3
-        :param epsilon:     threshold that determines by how much the evaluation function of a set must improve over the
-                            currently best scoring set in order for the new set to be adopted. Default value 0.0
+                                                            BFS: empty feature set
+            mandatory_features=None:    set of feature ids that is always included and will not be modified by the
+                                        selection process.
+                                        Default value None: empty set
+                                        (Explanation: Say you are working with MRT data (image processing, many
+                                        different channels, each channel is acquired separately -> acquisition of each
+                                        additional channel is expensive, task is to identify which channels are required
+                                        to perform a certain task). There are mandatory channels by law. Therefore it
+                                        is desirable to find the best feature (channel) set given the channels that you
+                                        will have to acquire anyways.)
+            permitted_features=None:    set of feature ids that specify which feature ids will be searched for
+                                        adding/removing features.
+                                        Default value None: all features
+                                        (one could easily crop the X array instead of using this parameter but using
+                                        permitted_features instead has two advantages: 1) it avoids copying of the data,
+                                        2) feature ID correspondences are trivial (in the cropped dataset feature
+                                        IDs 2, 3, 6 correspond to different features than in the uncropped dataset))
+            overshoot=3:                amount of iterations to continue running although no improvement over the evaluation
+                                        function could be achieved. Increasing this number may help overcome potential local minima.
+                                        Default value: 3
+            epsilon=0.:                 threshold that determines by how much the evaluation function of a set must improve over the
+                                        currently best scoring set in order for the new set to be adopted. Default value 0.0
         :return: tuple consisting of the best found feature set and the value of its corresponding evaluation function
+
         """
-        n_features = X.shape[1]
-        n_samples = X.shape[0]
+        if self._method == "SFS":
+            return self.__sequential_feature_selection(direction="forward", **kwargs)
+        elif self._method == "SBE":
+            return self.__sequential_feature_selection(direction="backward", **kwargs)
+        else:
+            return self.__best_first_search(**kwargs)
+
+    def __sequential_feature_selection(self, indices=None, direction="forward", do_advanced_search=False, initial_features=None,
+                                     mandatory_features=None, permitted_features=None, overshoot=3, epsilon=0.):
+        n_features = self._X.shape[1]
+        n_samples = self._X.shape[0]
 
         # this whole section is just to check whether all arguments are valid ------------------------------------------
-        if n_samples != len(Y):
+        if n_samples != len(self._Y):
             raise AttributeError("Y must have the same length as X has rows (n_samples)")
 
         if indices == None:
@@ -160,46 +217,46 @@ class FeatureSelection(object):
 
         # here we set the default values for constant_feature_ids, feature_search_space and initial_feature_set
         # depending on the selected search direction -------------------------------------------------------------------
-        if constant_feature_ids is None:
-            constant_feature_ids = set([])
-        if feature_search_space is None:
-            feature_search_space = set(list(np.arange(n_features))).difference(constant_feature_ids)
+        if mandatory_features is None:
+            mandatory_features = set([])
+        if permitted_features is None:
+            permitted_features = set(list(np.arange(n_features))).difference(mandatory_features)
 
         if direction == "forward":
-            if initial_feature_set is None:
-                initial_feature_set = set([])
-            remaining_features = feature_search_space.difference(initial_feature_set)
+            if initial_features is None:
+                initial_features = set([])
+            remaining_features = permitted_features.difference(initial_features)
             set_operation = 1
         else:
-            if initial_feature_set is None:
-                initial_feature_set = set(feature_search_space.difference(constant_feature_ids))
+            if initial_features is None:
+                initial_features = set(permitted_features.difference(mandatory_features))
             remaining_features = set([])
             set_operation = -1
 
         # check whether the entries of constant_feature_ids, feature_search_space and initial_feature_set are consistent
         # constant_feature_ids cannot be contained in the initial_feature_set
-        if len(initial_feature_set.intersection(constant_feature_ids)) != 0:
+        if len(initial_features.intersection(mandatory_features)) != 0:
             raise AttributeError("constant_feature_ids cannot be contained in initial_feature_ids")
 
         # init feature set must be a subset of the feature search space
-        if feature_search_space.intersection(initial_feature_set) != initial_feature_set:
+        if permitted_features.intersection(initial_features) != initial_features:
             raise AttributeError("initial_feature_set must be a subset of feature_search_space")
 
         # constant features cannot be in the feature_search_space
-        if len(feature_search_space.intersection(constant_feature_ids)) != 0:
+        if len(permitted_features.intersection(mandatory_features)) != 0:
             raise AttributeError("feature_search_space cannot contain features from constant_feature_ids")
 
         # score initialization, a higher score is better than a lower one
-        if len(initial_feature_set) == 0:
-            score_of_current_set = -9999999999.9
+        if len(initial_features) == 0:
+            score_of_current_set = float("-inf")
 
         else:
-            score_of_current_set = self._evaluation_function(X, Y, indices, initial_feature_set)
+            score_of_current_set = self._evaluation_function(self._X, self._Y, indices, initial_features)
 
-        current_features = initial_feature_set
+        current_features = initial_features
         overall_best_score = score_of_current_set
 
-        overall_best = initial_feature_set
+        overall_best = initial_features
         floating_search_operation = - set_operation
 
         best_not_changed_in = 0
@@ -207,7 +264,7 @@ class FeatureSelection(object):
         #now start the feature selection process
         while (best_not_changed_in <= overshoot):
             logger.info("current best feature set %s", str(overall_best))
-            score_of_best_feat_to_modify = -9999999999.9
+            score_of_best_feat_to_modify = float("-inf")
             best_feat_to_modify = None
 
             # determine which features to look at in this iteration (all features not in current_features (=remaining
@@ -219,14 +276,14 @@ class FeatureSelection(object):
 
             for i in look_at:
                 # modify feature i (set_operation depends on direction=forward/backward) and append constant feature set
-                new_feature_set = self.apply_operation_to_feature_set(current_features, i, set_operation)
-                new_feature_set = new_feature_set.union(constant_feature_ids)
+                new_feature_set = self.__apply_operation_to_feature_set(current_features, i, set_operation)
+                new_feature_set = new_feature_set.union(mandatory_features)
 
                 if len(new_feature_set) == 0:
                     continue
 
                 # evaluate this set
-                score_with_new_set = self._evaluation_function(X, Y, indices, new_feature_set)
+                score_with_new_set = self._evaluation_function(self._X, self._Y, indices, new_feature_set)
 
                 if score_with_new_set > score_of_best_feat_to_modify:
                     best_feat_to_modify = i
@@ -234,8 +291,8 @@ class FeatureSelection(object):
 
 
             if best_feat_to_modify is not None:
-                remaining_features = self.apply_operation_to_feature_set(remaining_features, best_feat_to_modify, floating_search_operation)
-                current_features = self.apply_operation_to_feature_set(current_features, best_feat_to_modify, set_operation)
+                remaining_features = self.__apply_operation_to_feature_set(remaining_features, best_feat_to_modify, floating_search_operation)
+                current_features = self.__apply_operation_to_feature_set(current_features, best_feat_to_modify, set_operation)
                 just_modified_feature = best_feat_to_modify
                 score_of_current_set = score_of_best_feat_to_modify
 
@@ -245,7 +302,7 @@ class FeatureSelection(object):
                 # a feature did improve the evaluation function in the previous step
                 if score_of_current_set > overall_best_score:
                     # only actually do this if do_floating_search is TRUE
-                    continue_to_float_search = do_floating_search
+                    continue_to_float_search = do_advanced_search
 
                     # if forward selection then curr set must not be empty
                     if (direction == "forward") & (len(current_features) < 2):
@@ -261,26 +318,26 @@ class FeatureSelection(object):
                         while continue_float_search:
                             logger.info("floating search: ")
                             best_feat_to_modify = None
-                            best_feat_to_modify_score = -99999.0
+                            best_feat_to_modify_score = float("-inf")
 
                             if direction == "forward":
-                                look_at = self.apply_operation_to_feature_set(current_features, just_modified_feature, -1)
+                                look_at = self.__apply_operation_to_feature_set(current_features, just_modified_feature, -1)
                             else:
-                                look_at = self.apply_operation_to_feature_set(remaining_features, just_modified_feature, -1)
+                                look_at = self.__apply_operation_to_feature_set(remaining_features, just_modified_feature, -1)
                             for i in look_at:
-                                new_feature_set = self.apply_operation_to_feature_set(current_features, i, floating_search_operation)
-                                new_feature_set = new_feature_set.union(constant_feature_ids)
+                                new_feature_set = self.__apply_operation_to_feature_set(current_features, i, floating_search_operation)
+                                new_feature_set = new_feature_set.union(mandatory_features)
                                 if len(new_feature_set) > 0:
                                     #print new_feature_set
-                                    score_with_new_feature_set = self._evaluation_function(X, Y, indices, new_feature_set)
+                                    score_with_new_feature_set = self._evaluation_function(self._X, self._Y, indices, new_feature_set)
 
                                     if score_with_new_feature_set > best_feat_to_modify_score:
                                         best_feat_to_modify = i
                                         best_feat_to_modify_score = score_with_new_feature_set
                             logger.info("best floating search score: %f"%best_feat_to_modify_score)
                             if (best_feat_to_modify_score > score_of_current_set):
-                                remaining_features = self.apply_operation_to_feature_set(remaining_features, best_feat_to_modify, -floating_search_operation)
-                                current_features = self.apply_operation_to_feature_set(current_features, best_feat_to_modify, floating_search_operation)
+                                remaining_features = self.__apply_operation_to_feature_set(remaining_features, best_feat_to_modify, -floating_search_operation)
+                                current_features = self.__apply_operation_to_feature_set(current_features, best_feat_to_modify, floating_search_operation)
                                 score_of_current_set = best_feat_to_modify_score
                                 logger.info("updated feature set thanks to float search: %s", str(current_features))
                                 if (direction == "forward") & (len(current_features) < 1):
@@ -293,42 +350,17 @@ class FeatureSelection(object):
             if score_of_current_set > (overall_best_score - epsilon):
                 overall_best_score = score_of_current_set
                 best_not_changed_in = 0
-                overall_best = current_features.union(constant_feature_ids)
+                overall_best = current_features.union(mandatory_features)
             else:
                 best_not_changed_in += 1
                 logger.info("best set has not changed in %d iterations" % best_not_changed_in)
 
         return np.sort(list(overall_best)).astype("int"), overall_best_score
 
-    def best_first_search(self, X, Y, indices = None, do_compound_operators = False, initial_feature_set = None,
-                          constant_feature_ids = None, feature_search_space = None, overshoot = 3, epsilon = 0.):
+    def __best_first_search(self, indices=None, do_advanced_search=False, initial_features=None,
+                          mandatory_features=None, permitted_features=None, overshoot=3, epsilon=0.):
 
-
-        """
-        This function uses the best first search algorithm to find feature sets. it is similar to a priority queue.
-        Compound operators may increase the search speed if many features are present and no substantial feature
-        redundancy is to be expected
-
-        :param X:           (n_samples, n_features) numpy array containing the data
-        :param Y:           1-d array containing the corresponding labels (length n_samples)
-        :param indices:     integer array containing the indices that are used for feature selection.
-                            Default value None: all indices will be used
-        :param do_compound_operators:   bool indicating whether compound operators are used for the search
-        :param initial_feature_set:     set of feature ids to start the search with.
-                                        Default value None: SFS: empty feature set
-                                                            SBE: full feature set (all features)
-        :param constant_feature_ids:    set of feature ids that is always included and will not be modified by the
-                                        selection process. Default value None: empty set
-        :param feature_search_space:    set of feature ids that specify which feature ids will be searched for
-                                        adding/removing features. Default value None: all features
-        :param overshoot:   amount of iterations to continue running although no improvement over the evaluation
-                            function could be achieved. Increasing this number may help overcome potential local minima.
-                            Default value: 3
-        :param epsilon:     threshold that determines by how much the evaluation function of a set must improve over the
-                            currently best scoring set in order for the new set to be adopted. Default value 0.0
-        :return:            best found feature set and its corresponding score (determined by the evaluation function)
-        """
-        n_samples, n_features = X.shape
+        n_samples, n_features = self._X.shape
 
         def expand_node(node, open_list, closed_list, n_features):
             children = []
@@ -338,7 +370,7 @@ class FeatureSelection(object):
                 if (not new_child in open_list) and (not new_child in closed_list) and (len(new_child) > 0):
                     children += [new_child]
 
-            features_not_in_node = set(feature_search_space).symmetric_difference(node)
+            features_not_in_node = set(permitted_features).symmetric_difference(node)
             for feature in features_not_in_node:
                 new_child = set(node)
                 new_child.add(feature)
@@ -349,7 +381,7 @@ class FeatureSelection(object):
         def obtain_scores_of_children(children, indices):
             scores = []
             for child in children:
-                scores += [self._evaluation_function(X, Y, indices, np.array(list(child.union(constant_feature_ids))))]
+                scores += [self._evaluation_function(self._X, self._Y, indices, np.array(list(child.union(mandatory_features))))]
             return scores
 
         def pick_next_node(open_list, open_scores, closed_list):
@@ -362,7 +394,7 @@ class FeatureSelection(object):
             # would allow explicit use of pointers
 
         # this whole section is just to check whether all arguments are valid ------------------------------------------
-        if n_samples != len(Y):
+        if n_samples != len(self._Y):
             raise AttributeError("Y must have the same length as X has rows (n_samples)")
 
         if indices == None:
@@ -373,40 +405,40 @@ class FeatureSelection(object):
 
         # here we set the default values for constant_feature_ids, feature_search_space and initial_feature_set
         # depending on the selected search direction -------------------------------------------------------------------
-        if constant_feature_ids is None:
-            constant_feature_ids = set([])
-        if feature_search_space is None:
-            feature_search_space = set(list(np.arange(n_features))).difference(constant_feature_ids)
-        if initial_feature_set is None:
-            initial_feature_set = set([])
+        if mandatory_features is None:
+            mandatory_features = set([])
+        if permitted_features is None:
+            permitted_features = set(list(np.arange(n_features))).difference(mandatory_features)
+        if initial_features is None:
+            initial_features = set([])
 
         # check whether the entries of constant_feature_ids, feature_search_space and initial_feature_set are consistent
         # constant_feature_ids cannot be contained in the initial_feature_set
-        if len(initial_feature_set.intersection(constant_feature_ids)) != 0:
+        if len(initial_features.intersection(mandatory_features)) != 0:
             raise AttributeError("constant_feature_ids cannot be contained in initial_feature_ids")
 
         # init feature set must be a subset of the feature search space
-        if feature_search_space.intersection(initial_feature_set) != initial_feature_set:
+        if permitted_features.intersection(initial_features) != initial_features:
             raise AttributeError("initial_feature_set mus be a subset of feature_search_space")
 
         # constant features cannot be in the feature_search_space
-        if len(feature_search_space.intersection(constant_feature_ids)) != 0:
+        if len(permitted_features.intersection(mandatory_features)) != 0:
             raise AttributeError("feature_search_space cannot contain features from constant_feature_ids")
 
         # score initialization, a higher score is better than a lower one
-        if len(initial_feature_set) == 0:
-            score_of_current_set = -9999999999.9
+        if len(initial_features) == 0:
+            score_of_current_set = float("-inf")
 
         else:
-            score_of_current_set = self._evaluation_function(X, Y, indices, initial_feature_set)
+            score_of_current_set = self._evaluation_function(self._X, self._Y, indices, initial_features)
 
         # initialize open and closed lists
-        open_list = [initial_feature_set]
+        open_list = [initial_features]
         open_scores = [score_of_current_set]
         closed_list = []
 
 
-        best_set = initial_feature_set
+        best_set = initial_features
         score_of_best_set = score_of_current_set
 
         best_not_changed_in = 0
@@ -453,7 +485,7 @@ class FeatureSelection(object):
             # continue only to compound search if 1) it has been activated by the user, 2) the best_set has been updated
             # AND 3) there was more than one child in the new_children list (>0 because one child has already been
             # popped form the list)
-            while(do_compound_operators & continue_compound & (len(new_scores) > 0)):
+            while(do_advanced_search & continue_compound & (len(new_scores) > 0)):
                 # find second best set (best one has already been removed)
                 id_of_best_child = np.argmax(new_scores)
                 best_child = new_children.pop(id_of_best_child)
@@ -467,7 +499,7 @@ class FeatureSelection(object):
                     operation = +1
 
                 # create new child with compound operators
-                compound_child = self.apply_operation_to_feature_set(best_set, list(modified_feature)[0], operation)
+                compound_child = self.__apply_operation_to_feature_set(best_set, list(modified_feature)[0], operation)
 
                 if len(compound_child) < 1:
                     break
@@ -475,7 +507,7 @@ class FeatureSelection(object):
                     break
 
                 # if compound_child is valid then evaluate it and add it to the lists
-                score_of_compound_child = self._evaluation_function(X, Y, indices, compound_child)
+                score_of_compound_child = self._evaluation_function(self._X, self._Y, indices, compound_child)
 
                 open_list += [compound_child]
                 open_scores += [score_of_compound_child]
@@ -487,4 +519,4 @@ class FeatureSelection(object):
                 else:
                     continue_compound = False
 
-        return np.sort(list(best_set.union(constant_feature_ids))), score_of_best_set
+        return np.sort(list(best_set.union(mandatory_features))), score_of_best_set

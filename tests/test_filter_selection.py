@@ -1,14 +1,16 @@
 __author__ = 'fabian'
 import sys
 sys.path.append('../')
+sys.path.append("../mutual_information")
 import utils
 import filter_feature_selection
 import numpy as np
 import feast
-import mutual_information
+import mutual_information_old
 import unittest
 import logging
 import ctypes as c
+import IPython
 
 logger = logging.Logger('Filter_Selection_testing')
 logger.setLevel(logging.DEBUG)
@@ -55,7 +57,7 @@ class TestFilterFeatureSelection(unittest.TestCase):
 
     def test_class_cond_mi_calculation(self):
         X, Y = utils.load_digits()
-        X = mutual_information.normalize_data_for_MI(X)
+        X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
         selector = filter_feature_selection.FilterFeatureSelection(X, Y, "CIFE")
         for i in range(X.shape[1]):
@@ -64,17 +66,17 @@ class TestFilterFeatureSelection(unittest.TestCase):
                 X2 = np.array(X[:,j])
 
                 cond_mi_pyfeast = self.__calculate_cond_MI(X1, X2, Y)
-                cond_mi_ours = selector._calculate_class_conditional_MI(X1, X2, Y)
+                cond_mi_ours = selector._calculate_class_conditional_MI(X1.astype("int"), X2.astype("int"), Y)
                 logger.debug("class cond mutual info: features: %d and %d; pyfeast: %f \t ours: %f"%(i, j, cond_mi_pyfeast, cond_mi_ours))
                 self.assertTrue(np.isclose(cond_mi_pyfeast, cond_mi_ours, rtol=0.01, atol=0.00001))
 
     def test_CIFE(self):
         X, Y = utils.load_digits()
-        X = mutual_information.normalize_data_for_MI(X)
+        X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
         selector = filter_feature_selection.FilterFeatureSelection(X, Y, "CIFE")
         num_feat = 10
-        our_set = selector.run_selection(num_feat)
+        our_set = selector.run(num_feat)
         feast_set = np.array(feast.CIFE(X, Y, num_feat)).astype("int")
         logger.debug("CIFE")
         logger.debug("ours\t%s"%str(our_set))
@@ -84,11 +86,11 @@ class TestFilterFeatureSelection(unittest.TestCase):
 
     def test_JMI(self):
         X, Y = utils.load_digits()
-        X = mutual_information.normalize_data_for_MI(X)
+        X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
         selector = filter_feature_selection.FilterFeatureSelection(X, Y, "JMI")
         num_feat = 10
-        our_set = selector.run_selection(num_feat)
+        our_set = selector.run(num_feat)
         feast_set = np.array(feast.JMI(X, Y, num_feat)).astype("int")
         logger.debug("JMI")
         logger.debug("ours\t%s"%str(our_set))
@@ -97,11 +99,11 @@ class TestFilterFeatureSelection(unittest.TestCase):
 
     def test_ICAP(self):
         X, Y = utils.load_digits()
-        X = mutual_information.normalize_data_for_MI(X)
+        X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
         selector = filter_feature_selection.FilterFeatureSelection(X, Y, "ICAP")
         num_feat = 10
-        our_set = selector.run_selection(num_feat)
+        our_set = selector.run(num_feat)
         feast_set = np.array(feast.ICAP(X, Y, num_feat)).astype("int")
         logger.debug("ICAP")
         logger.debug("ours\t%s"%str(our_set))
@@ -110,11 +112,11 @@ class TestFilterFeatureSelection(unittest.TestCase):
 
     def test_CMIM(self):
         X, Y = utils.load_digits()
-        X = mutual_information.normalize_data_for_MI(X)
+        X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
         selector = filter_feature_selection.FilterFeatureSelection(X, Y, "CMIM")
         num_feat = 10
-        our_set = selector.run_selection(num_feat)
+        our_set = selector.run(num_feat)
         feast_set = np.array(feast.CMIM(X, Y, num_feat)).astype("int")
         logger.debug("CMIM")
         logger.debug("ours\t%s"%str(our_set))
@@ -123,11 +125,11 @@ class TestFilterFeatureSelection(unittest.TestCase):
 
     def test_MIFS(self):
         X, Y = utils.load_digits()
-        X = mutual_information.normalize_data_for_MI(X)
+        X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
         selector = filter_feature_selection.FilterFeatureSelection(X, Y, "MIFS")
         num_feat = 10
-        our_set = selector.run_selection(num_feat)
+        our_set = selector.run(num_feat)
         feast_set = np.array(feast.BetaGamma(X, Y, num_feat, 1.0, 0.0)).astype("int") # MIFS in feast is buggy
                                                                                     # (beta=0 although it should be =1)
         logger.debug("MIFS")
@@ -138,11 +140,11 @@ class TestFilterFeatureSelection(unittest.TestCase):
 
     def test_mRMR(self):
         X, Y = utils.load_digits()
-        X = mutual_information.normalize_data_for_MI(X)
+        X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
         selector = filter_feature_selection.FilterFeatureSelection(X, Y, "mRMR")
         num_feat = 10
-        our_set = selector.run_selection(num_feat)
+        our_set = selector.run(num_feat)
         feast_set = np.array(feast.mRMR(X, Y, num_feat)).astype("int")
         logger.debug("mRMR")
         logger.debug("ours\t%s"%str(our_set))
@@ -151,14 +153,14 @@ class TestFilterFeatureSelection(unittest.TestCase):
 
     def test_change_method(self):
         X, Y = utils.load_digits()
-        X = mutual_information.normalize_data_for_MI(X)
+        X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
         selector = filter_feature_selection.FilterFeatureSelection(X, Y, "mRMR")
         num_feat = 10
-        our_set = selector.run_selection(num_feat)
+        our_set = selector.run(num_feat)
         feast_set = np.array(feast.ICAP(X, Y, num_feat)).astype("int")
         selector.change_method("ICAP")
-        our_set = selector.run_selection(num_feat)
+        our_set = selector.run(num_feat)
         logger.debug("mRMR changed to ICAP")
         logger.debug("ours\t%s"%str(our_set))
         logger.debug("feast\t%s"%str(feast_set))

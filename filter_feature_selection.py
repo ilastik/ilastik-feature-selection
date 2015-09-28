@@ -1,5 +1,8 @@
 __author__ = 'fabian'
+import sys
+sys.path.append("mutual_information/")
 import mutual_information
+import mutual_information_old
 import numpy as np
 import logging
 import IPython
@@ -15,7 +18,7 @@ fhandler.setFormatter(formatter)
 logger.addHandler(fhandler)
 
 class FilterFeatureSelection(object):
-    def __init__(self, X, Y, method = "ICAP"):
+    def __init__(self, X, Y, method="ICAP"):
         """
         This class provides easy access to mutual information based filter feature selection.
         The default mutual information estimation algorithm used is the histogram binning method. If a more
@@ -30,7 +33,7 @@ class FilterFeatureSelection(object):
             raise ValueError("X must have as many samples as there are labels in Y")
 
         self._n_features = X.shape[1]
-        self._X = mutual_information.normalize_data_for_MI(X)
+        self._X = mutual_information_old.normalize_data_for_MI(X)
         self._Y = Y
         self._method_str = method
         self._methods = {
@@ -45,13 +48,13 @@ class FilterFeatureSelection(object):
         self._filter_criterion_kwargs = {}
         self.change_method(method)
         self._method = self._methods[method]
-        self._mutual_information_estimator = mutual_information.calculate_mutual_information_histogram_binning
+        self._mutual_information_estimator = mutual_information.calculate_mutual_information
 
         self._redundancy = np.zeros((self._n_features, self._n_features)) - 1.
         self._relevancy = np.zeros((self._n_features)) - 1
         self._class_cond_red = np.zeros((self._n_features, self._n_features)) - 1
 
-    def change_MI_estimator(self, mi_estimator, estimator_kwargs = {}):
+    def change_MI_estimator(self, mi_estimator, estimator_kwargs={}):
         """
 
         :param mi_estimator: mutual information estimator. Inferface: mutual_information = mi_estimator(X1, X2,
@@ -63,7 +66,7 @@ class FilterFeatureSelection(object):
         self._mi_method_kwargs = estimator_kwargs
 
 
-    def change_method(self, method, method_kwargs = {}):
+    def change_method(self, method, **method_kwargs):
         """
         Changes the filter criterion which is used to select the features
 
@@ -120,7 +123,7 @@ class FilterFeatureSelection(object):
             self._class_cond_red[feat2, feat1] = this_class_cond_red
         return self._class_cond_red[feat1, feat2]
 
-    def __J_MIFS(self, features_in_set, feature_to_be_tested, beta = 1):
+    def __J_MIFS(self, features_in_set, feature_to_be_tested, beta=1):
         relevancy = self._get_relevancy(feature_to_be_tested)
         tmp = 0.
         if len(features_in_set) > 0:
@@ -201,7 +204,7 @@ class FilterFeatureSelection(object):
     def _evaluate_feature(self, features_in_set, feature_to_be_tested):
         return self._method(features_in_set, feature_to_be_tested, **self._filter_criterion_kwargs)
 
-    def run_selection(self, n_features_to_select):
+    def run(self, n_features_to_select):
         """
         Performs the actual feature selection using the specified filter criterion
 
