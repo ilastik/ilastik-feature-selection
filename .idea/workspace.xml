@@ -2,36 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="99745d97-3bd9-4625-a49d-85fe1b15f4c9" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/filter_feature_selection_example.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/filter_log.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/wrapper_feature_example.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/wrapper_log.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/filter_feature_selection.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/mutual_information/build/temp.linux-x86_64-2.7/mutual_information.o" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/mutual_information/mutual_information.c" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/mutual_information/mutual_information.pyx" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/mutual_information/mutual_information.so" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/mutual_information/setup.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/mutual_information/test_mutual_info.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/mutual_information_old.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/Filter_Selection_testing_log.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/MI_testing_log.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/__init__.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/digits_data.npy" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/digits_target.npy" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/filter_log.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/iris_data.npy" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/iris_target.npy" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/test_filter_selection.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/test_mutual_information.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/test_wrapper_selection.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/tests/wrapper_log.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/utils.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/wrapper_feature_selection.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/filter_log.txt" afterPath="$PROJECT_DIR$/filter_log.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wrapper_log.txt" afterPath="$PROJECT_DIR$/wrapper_log.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/feature_selection/examples/filter_feature_selection_example.py" afterPath="$PROJECT_DIR$/feature_selection/examples/filter_feature_selection_example.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/feature_selection/examples/wrapper_feature_example.py" afterPath="$PROJECT_DIR$/feature_selection/examples/wrapper_feature_example.py" />
     </list>
     <ignored path="feature_selection_clean.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -55,21 +27,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="test_filter_selection.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="test_filter_selection.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/feature_selection/tests/test_filter_selection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-12.566038" vertical-offset="378" max-vertical-offset="3150">
-              <caret line="58" column="25" selection-start-line="58" selection-start-column="25" selection-end-line="58" selection-end-column="25" />
+            <state vertical-scroll-proportion="0.12562314" vertical-offset="378" max-vertical-offset="3150">
+              <caret line="28" column="42" selection-start-line="28" selection-start-column="42" selection-end-line="28" selection-end-column="42" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_wrapper_selection.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/feature_selection/tests/test_wrapper_selection.py">
+      <file leaf-file-name="wrapper_feature_selection.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/feature_selection/wrapper_feature_selection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.54607177" vertical-offset="1561" max-vertical-offset="2592">
-              <caret line="118" column="62" selection-start-line="118" selection-start-column="62" selection-end-line="118" selection-end-column="62" />
+            <state vertical-scroll-proportion="-13.0" vertical-offset="2465" max-vertical-offset="9396">
+              <caret line="159" column="26" selection-start-line="159" selection-start-column="26" selection-end-line="159" selection-end-column="26" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/feature_selection/tests/utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-9.36" vertical-offset="0" max-vertical-offset="810">
+              <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -123,6 +105,8 @@
         <option value="$PROJECT_DIR$/feature_selection/tests/test_filter_selection.py" />
         <option value="$PROJECT_DIR$/feature_selection/filter_feature_selection.py" />
         <option value="$PROJECT_DIR$/feature_selection/tests/test_wrapper_selection.py" />
+        <option value="$PROJECT_DIR$/feature_selection/examples/filter_feature_selection_example.py" />
+        <option value="$PROJECT_DIR$/feature_selection/examples/wrapper_feature_example.py" />
       </list>
     </option>
   </component>
@@ -183,38 +167,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="feature_selection" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="feature_selection_clean" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="feature_selection_clean" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="feature_selection" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tests" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="feature_selection_clean" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="feature_selection_clean" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cython" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -453,24 +405,52 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/feature_selection/tests/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.34917557" vertical-offset="0" max-vertical-offset="1031">
-          <caret line="24" column="34" selection-start-line="24" selection-start-column="34" selection-end-line="24" selection-end-column="34" />
+        <state vertical-scroll-proportion="-9.36" vertical-offset="0" max-vertical-offset="810">
+          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/feature_selection/examples/filter_feature_selection_example.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-10.08" vertical-offset="0" max-vertical-offset="972">
+          <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
+          <folding>
+            <element signature="e#23#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/feature_selection/wrapper_feature_selection.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-13.0" vertical-offset="2465" max-vertical-offset="9396">
+          <caret line="159" column="26" selection-start-line="159" selection-start-column="26" selection-end-line="159" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/feature_selection/examples/wrapper_feature_example.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.471387" vertical-offset="0" max-vertical-offset="1031">
+          <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+          <folding>
+            <element signature="e#23#78#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/feature_selection/tests/test_wrapper_selection.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.34917557" vertical-offset="0" max-vertical-offset="2592">
+          <caret line="20" column="55" selection-start-line="20" selection-start-column="55" selection-end-line="20" selection-end-column="55" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/feature_selection/tests/test_filter_selection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-12.566038" vertical-offset="378" max-vertical-offset="3150">
-          <caret line="58" column="25" selection-start-line="58" selection-start-column="25" selection-end-line="58" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/feature_selection/tests/test_wrapper_selection.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.54607177" vertical-offset="1561" max-vertical-offset="2592">
-          <caret line="118" column="62" selection-start-line="118" selection-start-column="62" selection-end-line="118" selection-end-column="62" />
+        <state vertical-scroll-proportion="0.12562314" vertical-offset="378" max-vertical-offset="3150">
+          <caret line="28" column="42" selection-start-line="28" selection-start-column="42" selection-end-line="28" selection-end-column="42" />
           <folding />
         </state>
       </provider>

@@ -1,18 +1,23 @@
 __author__ = 'fabian'
 
-import sys
-sys.path.append("../tests")
-sys.path.append("../")
-import filter_feature_selection
-from utils import load_digits
+import feature_selection
+from sklearn import datasets
+import numpy as np
 
 def select_features_digits():
     # loads doigits dataset form sklearn and permutes instances (otherwise they are sorted in ascending order by their
     # target label
-    X, Y = load_digits()
+    X = datasets.load_digits()['data']
+    Y = datasets.load_digits()['target']
+
+    n_samples = X.shape[0]
+    permIndexes = np.random.permutation(n_samples)
+    X = X[permIndexes]
+    Y = Y[permIndexes]
+
 
     # create feature selector instance. Default criterion is "ICAP"
-    feat_selector = filter_feature_selection.FilterFeatureSelection(X, Y)
+    feat_selector = feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y)
 
     # run feature selection. Desired number of features needs to be specified
     selected_features_ICAP = feat_selector.run(10)
@@ -31,7 +36,7 @@ def select_features_digits():
 
     # notice how the feature selection becomes faster the more methods have already been run
     # this is because mutual information values will be re-used once they are calculated
-    feat_selector_new = filter_feature_selection.FilterFeatureSelection(X, Y)
+    feat_selector_new = feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y)
     available_methods_new = feat_selector_new.get_available_methods()
     print "\nmutual information values are retained once they are calculated. Speedup for consecutive runs with different methods"
     for method in available_methods:
