@@ -3,7 +3,6 @@ __author__ = 'fabian'
 import IPython
 import numpy as np
 import sklearn
-import utils
 from sklearn import cross_validation
 import logging
 

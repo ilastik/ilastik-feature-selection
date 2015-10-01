@@ -1,8 +1,9 @@
 __author__ = 'fabian'
 
 import sys
+sys.path.append("../tests")
 sys.path.append("../")
-import wrapper_feature_selection
+from feature_selection import wrapper_feature_selection
 from utils import load_digits
 from sklearn import ensemble
 
@@ -19,7 +20,7 @@ def select_features_digits():
     # should be). You may use your own evaluation function (interface: evaluate_set(X, Y, indices, feature_set))
     eval_function = wrapper_feature_selection.EvaluationFunction(rf, k_fold=5, complexity_penalty=0.4)
 
-    feature_selector = wrapper_feature_selection.FeatureSelection(eval_function.evaluate_feature_set_size_penalty)
+    feature_selector = wrapper_feature_selection.WrapperFeatureSelection(eval_function.evaluate_feature_set_size_penalty)
 
     # here are the different wrapper methods that are implemented in the FeatureSelection class
     selected_features_SFS = feature_selector.sequential_feature_selection(X, Y, do_floating_search=False, direction="forward")

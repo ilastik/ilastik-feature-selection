@@ -3,19 +3,20 @@ import sys
 sys.path.append('../')
 import utils
 import numpy as np
-import wrapper_feature_selection
+import feature_selection
 import sklearn
 import unittest
+import os
 import logging
 
 class TestWrapperMethod(unittest.TestCase):
     def test_wrapper_BFS_no_adv(self):
         rf = sklearn.ensemble.RandomForestClassifier(random_state = 14271, n_estimators = 10)
-        X = np.load("digits_data.npy")
-        Y = np.load("digits_target.npy")
+        X = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_data.npy")
+        Y = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_target.npy")
 
-        eval_fct = wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
-        feat_selector = wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="BFS")
+        eval_fct = feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
+        feat_selector = feature_selection.wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="BFS")
 
         a = feat_selector.run(do_advanced_search=False)
         self.assertEqual(a[1], 1.1995)
@@ -23,11 +24,11 @@ class TestWrapperMethod(unittest.TestCase):
 
     def test_wrapper_BFS_adv(self):
         rf = sklearn.ensemble.RandomForestClassifier(random_state = 14271, n_estimators = 10)
-        X = np.load("digits_data.npy")
-        Y = np.load("digits_target.npy")
+        X = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_data.npy")
+        Y = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_target.npy")
 
-        eval_fct = wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
-        feat_selector = wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="BFS")
+        eval_fct = feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
+        feat_selector = feature_selection.wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="BFS")
 
         a = feat_selector.run(do_advanced_search=True)
         self.assertEqual(a[1], 1.2064999999999999)
@@ -35,11 +36,11 @@ class TestWrapperMethod(unittest.TestCase):
 
     def test_wrapper_SFS_no_adv(self):
         rf = sklearn.ensemble.RandomForestClassifier(random_state = 1275, n_estimators = 10)
-        X = np.load("digits_data.npy")
-        Y = np.load("digits_target.npy")
+        X = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_data.npy")
+        Y = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_target.npy")
 
-        eval_fct = wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
-        feat_selector = wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SFS")
+        eval_fct = feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
+        feat_selector = feature_selection.wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SFS")
 
         a = feat_selector.run(do_advanced_search=False)
         self.assertEqual(a[1], 1.2029999999999998)
@@ -47,11 +48,11 @@ class TestWrapperMethod(unittest.TestCase):
 
     def test_wrapper_SFS_adv(self):
         rf = sklearn.ensemble.RandomForestClassifier(random_state = 1275, n_estimators = 10)
-        X = np.load("digits_data.npy")
-        Y = np.load("digits_target.npy")
+        X = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_data.npy")
+        Y = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_target.npy")
 
-        eval_fct = wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
-        feat_selector = wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SFS")
+        eval_fct = feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
+        feat_selector = feature_selection.wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SFS")
 
         a = feat_selector.run(do_advanced_search=True)
         self.assertEqual(a[1], 1.2029999999999998)
@@ -59,11 +60,11 @@ class TestWrapperMethod(unittest.TestCase):
 
     def test_wrapper_SBE_no_adv(self):
         rf = sklearn.ensemble.RandomForestClassifier(random_state = 1275, n_estimators = 10)
-        X = np.load("digits_data.npy")
-        Y = np.load("digits_target.npy")
+        X = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_data.npy")
+        Y = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_target.npy")
 
-        eval_fct = wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
-        feat_selector = wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SBE")
+        eval_fct = feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
+        feat_selector = feature_selection.wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SBE")
 
         a = feat_selector.run(do_advanced_search=False)
         self.assertEqual(a[1], 1.12425)
@@ -72,11 +73,11 @@ class TestWrapperMethod(unittest.TestCase):
 
     def test_wrapper_SBE_adv(self):
         rf = sklearn.ensemble.RandomForestClassifier(random_state = 1275, n_estimators = 10)
-        X = np.load("digits_data.npy")
-        Y = np.load("digits_target.npy")
+        X = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_data.npy")
+        Y = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_target.npy")
 
-        eval_fct = wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
-        feat_selector = wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SBE")
+        eval_fct = feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
+        feat_selector = feature_selection.wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SBE")
 
         a = feat_selector.run(do_advanced_search=True)
         self.assertEqual(a[1], 1.141)
@@ -85,11 +86,11 @@ class TestWrapperMethod(unittest.TestCase):
 
     def test_initial_set(self):
         rf = sklearn.ensemble.RandomForestClassifier(random_state = 1275, n_estimators = 10)
-        X = np.load("digits_data.npy")
-        Y = np.load("digits_target.npy")
+        X = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_data.npy")
+        Y = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_target.npy")
 
-        eval_fct = wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
-        feat_selector = wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SFS")
+        eval_fct = feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
+        feat_selector = feature_selection.wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SFS")
 
         a = feat_selector.run(do_advanced_search=False, initial_features = set(range(10)))
         self.assertEqual(set(a[0]), set([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 18, 21, 27, 30, 33, 42, 43,
@@ -103,11 +104,11 @@ class TestWrapperMethod(unittest.TestCase):
 
     def test_permitted_features(self):
         rf = sklearn.ensemble.RandomForestClassifier(n_estimators = 10)
-        X = np.load("digits_data.npy")
-        Y = np.load("digits_target.npy")
+        X = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_data.npy")
+        Y = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_target.npy")
 
-        eval_fct = wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
-        feat_selector = wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SFS")
+        eval_fct = feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
+        feat_selector = feature_selection.wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SFS")
 
         permitted_features = set(range(20))
         a = feat_selector.run(do_advanced_search=False, permitted_features = permitted_features)
@@ -119,11 +120,11 @@ class TestWrapperMethod(unittest.TestCase):
 
     def test_mandatory_features(self):
         rf = sklearn.ensemble.RandomForestClassifier(n_estimators = 10)
-        X = np.load("digits_data.npy")
-        Y = np.load("digits_target.npy")
+        X = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_data.npy")
+        Y = np.load(os.path.dirname(os.path.realpath(__file__)) +"/digits_target.npy")
 
-        eval_fct = wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
-        feat_selector = wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SFS")
+        eval_fct = feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
+        feat_selector = feature_selection.wrapper_feature_selection.WrapperFeatureSelection(X, Y, eval_fct.evaluate_feature_set_size_penalty, method="SFS")
 
         mandatory_features = set(range(20))
         a = feat_selector.run(do_advanced_search=False, mandatory_features = mandatory_features)

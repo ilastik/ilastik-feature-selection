@@ -1,6 +1,7 @@
 __author__ = 'fabian'
 
 import sys
+sys.path.append("../tests")
 sys.path.append("../")
 import filter_feature_selection
 from utils import load_digits
@@ -14,14 +15,14 @@ def select_features_digits():
     feat_selector = filter_feature_selection.FilterFeatureSelection(X, Y)
 
     # run feature selection. Desired number of features needs to be specified
-    selected_features_ICAP = feat_selector.run_selection(10)
+    selected_features_ICAP = feat_selector.run(10)
     print "Selected features for the digits dataset (ICAP criterion) are: \n", str(selected_features_ICAP)
 
     # ------------------------------------------------------------------------------------------------------------------
     # some more things you can do:
     # it is possible to change the criterion:
     feat_selector.change_method("CIFE")
-    selected_features_CIFE = feat_selector.run_selection(10)
+    selected_features_CIFE = feat_selector.run(10)
     print "Selected features for the digits dataset (CIFE criterion) are: \n", str(selected_features_CIFE)
 
     # available methods can be retrieved:
@@ -35,7 +36,7 @@ def select_features_digits():
     print "\nmutual information values are retained once they are calculated. Speedup for consecutive runs with different methods"
     for method in available_methods:
         feat_selector_new.change_method(method)
-        print method, ": ", feat_selector_new.run_selection(25)
+        print method, ": ", feat_selector_new.run(25)
 
 
 

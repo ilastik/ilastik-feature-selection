@@ -1,8 +1,7 @@
 __author__ = 'fabian'
-import sys
-sys.path.append("mutual_information/")
+
 import mutual_information
-import mutual_information_old
+
 import numpy as np
 import logging
 import IPython
@@ -33,7 +32,7 @@ class FilterFeatureSelection(object):
             raise ValueError("X must have as many samples as there are labels in Y")
 
         self._n_features = X.shape[1]
-        self._X = mutual_information_old.normalize_data_for_MI(X)
+        self._X = X
         self._Y = Y
         self._method_str = method
         self._methods = {
@@ -213,6 +212,16 @@ class FilterFeatureSelection(object):
         """
         logger.info("Initialize filter feature selection:")
         logger.info("using filter method: %s"%self._method_str)
+        if self._mutual_information_estimator == mutual_information.calculate_mutual_information:
+            def normalize_data_for_MI(X):
+                for i in xrange(X.shape[1]):
+                    std = X[:, i].std()
+                    if std != 0.:
+                        X[:, i] /= std
+                        X[:, i] -= X[:, i].min()
+                return np.floor(X).astype("int")
+            old_data = np.array(self._X)
+            self._X = normalize_data_for_MI(self._X)
         def find_next_best_feature(current_feature_set):
             features_not_in_set = set(np.arange(self._n_features)).difference(set(current_feature_set))
             best_J = -999999.9
@@ -239,6 +248,9 @@ class FilterFeatureSelection(object):
             else:
                 break
         logger.info("Filter feature selection done. Final set is: %s"%str(current_feature_set))
+        if self._mutual_information_estimator == mutual_information.calculate_mutual_information:
+            self._X = old_data
+
         return np.array(current_feature_set)
 
 

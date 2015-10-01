@@ -1,6 +1,6 @@
 __author__ = 'fabian'
 import sys
-sys.path.append("../")
+sys.path.append("../../cython/")
 import mutual_information_old
 import utils
 import numpy as np
