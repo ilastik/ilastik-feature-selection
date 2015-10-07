@@ -6,15 +6,16 @@ import numpy as np
 import logging
 import IPython
 
-logger = logging.Logger('filter_feature_selection')
-logger.setLevel(logging.DEBUG)
-
-fhandler = logging.FileHandler('filter_log.txt', 'w')
-
-formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
-fhandler.setFormatter(formatter)
-
-logger.addHandler(fhandler)
+logger = logging.getLogger(__name__)
+# logger = logging.Logger('filter_feature_selection')
+# logger.setLevel(logging.DEBUG)
+#
+# fhandler = logging.FileHandler('filter_log.txt', 'w')
+#
+# formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+# fhandler.setFormatter(formatter)
+#
+# logger.addHandler(fhandler)
 
 class FilterFeatureSelection(object):
     def __init__(self, X, Y, method="ICAP"):

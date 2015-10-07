@@ -12,15 +12,17 @@ import logging
 import ctypes as c
 import IPython
 
-logger = logging.Logger('Filter_Selection_testing')
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
 
-fhandler = logging.FileHandler('Filter_Selection_testing_log.txt', 'w')
-
-formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
-fhandler.setFormatter(formatter)
-
-logger.addHandler(fhandler)
+# logger = logging.Logger('Filter_Selection_testing')
+# logger.setLevel(logging.DEBUG)
+#
+# fhandler = logging.FileHandler('Filter_Selection_testing_log.txt', 'w')
+#
+# formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+# fhandler.setFormatter(formatter)
+#
+# logger.addHandler(fhandler)
 MI_Toolbox = c.CDLL("libMIToolbox.so")
 
 

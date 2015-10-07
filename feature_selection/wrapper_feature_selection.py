@@ -6,15 +6,16 @@ import sklearn
 from sklearn import cross_validation
 import logging
 
-logger = logging.Logger('wrapper_feature_selection')
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
+# logger = logging.Logger('wrapper_feature_selection')
+# logger.setLevel(logging.DEBUG)
+#
+# fhandler = logging.FileHandler('wrapper_log.txt', 'w')
+#
+# formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+# fhandler.setFormatter(formatter)
 
-fhandler = logging.FileHandler('wrapper_log.txt', 'w')
-
-formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
-fhandler.setFormatter(formatter)
-
-logger.addHandler(fhandler)
+# logger.addHandler(fhandler)
 
 
 class EvaluationFunction(object):
