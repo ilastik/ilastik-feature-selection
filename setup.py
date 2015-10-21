@@ -22,7 +22,7 @@ else:
     ]
 
 setup(name='feature_selection',
-      version='0.11',
+      version='0.122',
       description='feature selection',
       keywords='feature selection',
       license='MIT',

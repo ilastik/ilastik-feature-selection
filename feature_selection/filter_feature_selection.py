@@ -33,8 +33,8 @@ class FilterFeatureSelection(object):
             raise ValueError("X must have as many samples as there are labels in Y")
 
         self._n_features = X.shape[1]
-        self._X = X
-        self._Y = Y
+        self._X = np.array(X)
+        self._Y = np.array(Y)
         self._method_str = method
         self._methods = {
             "CIFE": self.__J_CIFE,
@@ -53,6 +53,7 @@ class FilterFeatureSelection(object):
         self._redundancy = np.zeros((self._n_features, self._n_features)) - 1.
         self._relevancy = np.zeros((self._n_features)) - 1
         self._class_cond_red = np.zeros((self._n_features, self._n_features)) - 1
+        self._class_cond_mi_method = self._calculate_class_conditional_MI
 
     def change_MI_estimator(self, mi_estimator, estimator_kwargs={}):
         """
@@ -102,6 +103,15 @@ class FilterFeatureSelection(object):
             con_mi += p_state * mi
         return con_mi
 
+    def _change_cmi_method(self, method):
+        """
+        Do not use this
+
+        :param method: Seriously. Don't. Its for some testing purposes
+        :return:
+        """
+        self._class_cond_mi_method = method
+
     def _get_relevancy(self, feat_id):
         if self._relevancy[feat_id] == -1:
             self._relevancy[feat_id] = self._mutual_information_estimator(self._X[:, feat_id], self._Y,
@@ -118,7 +128,7 @@ class FilterFeatureSelection(object):
 
     def _get_class_cond_red(self, feat1, feat2):
         if self._class_cond_red[feat1, feat2] == -1:
-            this_class_cond_red = self._calculate_class_conditional_MI(self._X[:, feat1], self._X[:, feat2], self._Y)
+            this_class_cond_red = self._class_cond_mi_method(self._X[:, feat1], self._X[:, feat2], self._Y)
             self._class_cond_red[feat1, feat2] = this_class_cond_red
             self._class_cond_red[feat2, feat1] = this_class_cond_red
         return self._class_cond_red[feat1, feat2]
