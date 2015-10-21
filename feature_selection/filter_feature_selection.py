@@ -4,7 +4,7 @@ import mutual_information
 
 import numpy as np
 import logging
-import IPython
+# import IPython
 
 logger = logging.getLogger(__name__)
 # logger = logging.Logger('filter_feature_selection')

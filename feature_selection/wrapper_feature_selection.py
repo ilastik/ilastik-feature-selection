@@ -1,6 +1,6 @@
 __author__ = 'fabian'
 
-import IPython
+# import IPython
 import numpy as np
 import sklearn
 from sklearn import cross_validation
