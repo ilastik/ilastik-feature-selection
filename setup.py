@@ -1,6 +1,8 @@
+import numpy
 from setuptools import setup
 from distutils.extension import Extension
 
+from Cython.Distutils import build_ext
 try:
     from Cython.Distutils import build_ext
 except ImportError:
@@ -13,12 +15,16 @@ ext_modules = [ ]
 
 if use_cython:
     ext_modules += [
-        Extension("feature_selection.mutual_information", [ "cython/mutual_information.pyx" ]),
+        Extension("feature_selection.mutual_information",
+                  [ "mutual_info/mutual_information.pyx" ],
+                  include_dirs=[numpy.get_include()]),
     ]
     cmdclass.update({ 'build_ext': build_ext })
 else:
     ext_modules += [
-        Extension("feature_selection.mutual_information", [ "cython/mutual_information.c" ]),
+        Extension("feature_selection.mutual_information",
+                  [ "mutual_info/mutual_information.c" ],
+                  include_dirs=[numpy.get_include()]),
     ]
 
 setup(name='feature_selection',
