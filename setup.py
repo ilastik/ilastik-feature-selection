@@ -4,8 +4,8 @@ from distutils.extension import Extension
 
 from Cython.Distutils import build_ext
 
-mutual_info_ext = Extension("feature_selection.mutual_information",
-                            [ "mutual_info/mutual_information.pyx" ],
+mutual_info_ext = Extension("feature_selection.mutual_information.mutual_information",
+                            [ "feature_selection/mutual_information/mutual_information.pyx" ],
                             include_dirs=[numpy.get_include()])
 
 setup(name='feature_selection',
@@ -13,7 +13,8 @@ setup(name='feature_selection',
       description='feature selection',
       keywords='feature selection',
       license='MIT',
-      packages=['feature_selection'],
+      packages=['feature_selection',
+                'feature_selection.mutual_information'],
       install_requires=[
           'sklearn',
       ],
