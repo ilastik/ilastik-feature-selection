@@ -9,15 +9,13 @@ mutual_info_ext = Extension("feature_selection.mutual_information.mutual_informa
                             include_dirs=[numpy.get_include()])
 
 setup(name='feature_selection',
-      version='0.122',
+      version='0.123',
       description='feature selection',
       keywords='feature selection',
       license='MIT',
       packages=['feature_selection',
                 'feature_selection.mutual_information'],
-      install_requires=[
-          'sklearn',
-      ],
+      #install_requires=['scikit-learn'], # Causes problems with conda
       test_suite='nose.collector',
       tests_require=['nose', 'nose-cover3'],
       include_package_data=True,

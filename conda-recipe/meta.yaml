@@ -1,0 +1,33 @@
+package:
+  name: feature_selection_clean
+  version: "0.123"
+
+source:
+  git_url: ../
+
+build:
+  number: 0
+  string: np{{np}}py{{py}}_{{PKG_BUILDNUM}}_g{{GIT_FULL_HASH[:7]}}
+
+requirements:
+  build:
+    - python 2.7*
+    - numpy {{NPY_VER}}*
+    - cython
+    - setuptools
+  
+  run:
+    - python 2.7*
+    - numpy {{NPY_VER}}*
+    - cython
+    - scikit-learn
+
+test:
+  requires:
+    - nose
+    - pyfeast
+
+about:
+  home: https://bitbucket.org/FabianIsensee/feature_selection_clean
+  license: None
+  summary: 'A Python library for selecting features during image classification.'
