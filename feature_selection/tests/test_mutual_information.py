@@ -1,7 +1,6 @@
 __author__ = 'fabian'
 
 import sys
-sys.path.append("../")
 import numpy as np
 import ctypes as c
 import mutual_information_old
@@ -20,7 +19,10 @@ fhandler.setFormatter(formatter)
 
 logger.addHandler(fhandler)
 
-MI_Toolbox = c.CDLL("libMIToolbox.so")
+try:
+    MI_Toolbox = c.CDLL(sys.prefix + "/lib/libMIToolbox.so")
+except:
+    MI_Toolbox = c.CDLL("libMIToolbox.so")
 
 class TestMutualInformation(unittest.TestCase):
     def __calculate_MI(self, data_0, data_1):

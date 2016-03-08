@@ -1,7 +1,5 @@
 __author__ = 'fabian'
 import sys
-sys.path.append('../')
-sys.path.append("../../cython/")
 import utils
 import feature_selection
 import numpy as np
@@ -10,7 +8,6 @@ import mutual_information_old
 import unittest
 import logging
 import ctypes as c
-import IPython
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +20,10 @@ logger = logging.getLogger(__name__)
 # fhandler.setFormatter(formatter)
 #
 # logger.addHandler(fhandler)
-MI_Toolbox = c.CDLL("libMIToolbox.so")
+try:
+    MI_Toolbox = c.CDLL(sys.prefix + "/lib/libMIToolbox.so")
+except:
+    MI_Toolbox = c.CDLL("libMIToolbox.so")
 
 
 class TestFilterFeatureSelection(unittest.TestCase):

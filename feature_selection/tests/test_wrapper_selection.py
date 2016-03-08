@@ -1,6 +1,5 @@
 __author__ = 'fabian'
 import sys
-sys.path.append('../')
 import utils
 import numpy as np
 import feature_selection
