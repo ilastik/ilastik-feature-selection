@@ -6,6 +6,8 @@ import numpy as np
 import logging
 # import IPython
 
+
+
 logger = logging.getLogger(__name__)
 # logger = logging.Logger('filter_feature_selection')
 # logger.setLevel(logging.DEBUG)
@@ -33,8 +35,18 @@ class FilterFeatureSelection(object):
             raise ValueError("X must have as many samples as there are labels in Y")
 
         self._n_features = X.shape[1]
-        self._X = np.array(X)
-        self._Y = np.array(Y)
+
+        def normalize_data_for_MI(X):
+            for i in xrange(X.shape[1]):
+                std = X[:, i].std()
+                if std != 0.:
+                    X[:, i] /= std
+                    X[:, i] -= X[:, i].min()
+            return np.floor(X).astype("int")
+        
+        self._X = normalize_data_for_MI(np.asarray(X))
+        self._Y = np.asarray(Y)
+        
         self._method_str = method
         self._methods = {
             "CIFE": self.__J_CIFE,
@@ -86,7 +98,7 @@ class FilterFeatureSelection(object):
         for state in states:
             indices = (Y == state)
             p_state = float(np.sum(indices)) / float(len(Y))
-            mi = self._mutual_information_estimator(X1[indices], X2[indices], **self._mi_method_kwargs)
+            mi = self._mutual_information_estimator(X1[indices], X2[indices])
             con_mi += p_state * mi
         return con_mi
 
@@ -101,14 +113,12 @@ class FilterFeatureSelection(object):
 
     def _get_relevancy(self, feat_id):
         if self._relevancy[feat_id] == -1:
-            self._relevancy[feat_id] = self._mutual_information_estimator(self._X[:, feat_id], self._Y,
-                                                                          **self._mi_method_kwargs)
+            self._relevancy[feat_id] = self._mutual_information_estimator(self._X[:, feat_id], self._Y)
         return self._relevancy[feat_id]
 
     def _get_redundancy(self, feat1, feat2):
         if self._redundancy[feat1, feat2] == -1:
-            this_redundancy = self._mutual_information_estimator(self._X[:, feat1], self._X[:, feat2],
-                                                                 **self._mi_method_kwargs)
+            this_redundancy = self._mutual_information_estimator(self._X[:, feat1], self._X[:, feat2])
             self._redundancy[feat1, feat2] = this_redundancy
             self._redundancy[feat2, feat1] = this_redundancy
         return self._redundancy[feat1, feat2]
@@ -210,16 +220,7 @@ class FilterFeatureSelection(object):
         """
         logger.info("Initialize filter feature selection:")
         logger.info("using filter method: %s"%self._method_str)
-        if self._mutual_information_estimator == mutual_information.calculate_mutual_information:
-            def normalize_data_for_MI(X):
-                for i in xrange(X.shape[1]):
-                    std = X[:, i].std()
-                    if std != 0.:
-                        X[:, i] /= std
-                        X[:, i] -= X[:, i].min()
-                return np.floor(X).astype("int")
-            old_data = np.array(self._X)
-            self._X = normalize_data_for_MI(self._X)
+
         def find_next_best_feature(current_feature_set):
             features_not_in_set = set(np.arange(self._n_features)).difference(set(current_feature_set))
             best_J = -999999.9
@@ -245,11 +246,11 @@ class FilterFeatureSelection(object):
                 selected_features += 1
             else:
                 break
+
         logger.info("Filter feature selection done. Final set is: %s"%str(current_feature_set))
-        if self._mutual_information_estimator == mutual_information.calculate_mutual_information:
-            self._X = old_data
 
         return np.array(current_feature_set)
+
 
 
 # Francois Fleuret. Fast Binary Feature Selection with Conditional Mutual Informa-
