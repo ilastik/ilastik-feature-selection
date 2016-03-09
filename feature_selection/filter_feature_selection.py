@@ -1,6 +1,6 @@
 __author__ = 'fabian'
 
-import mutual_information
+from sklearn.metrics import mutual_info_score
 
 import numpy as np
 import logging
@@ -44,28 +44,15 @@ class FilterFeatureSelection(object):
             "mRMR": self.__J_mRMR,
             "MIFS": self.__J_MIFS
         }
-        self._mi_method_kwargs = {}
         self._filter_criterion_kwargs = {}
         self.change_method(method)
         self._method = self._methods[method]
-        self._mutual_information_estimator = mutual_information.calculate_mutual_information
+        self._mutual_information_estimator = lambda X1, X2: mutual_info_score(X1,X2)/np.log(2.0)
 
         self._redundancy = np.zeros((self._n_features, self._n_features)) - 1.
         self._relevancy = np.zeros((self._n_features)) - 1
         self._class_cond_red = np.zeros((self._n_features, self._n_features)) - 1
         self._class_cond_mi_method = self._calculate_class_conditional_MI
-
-    def change_MI_estimator(self, mi_estimator, estimator_kwargs={}):
-        """
-
-        :param mi_estimator: mutual information estimator. Inferface: mutual_information = mi_estimator(X1, X2,
-                             **estimator_kwargs) with X1 and X2 (size: n_samples) being numpy arrays containing the
-                             values of one feature
-        :param estimator_kwargs: kwargs of the chosen estimator (dictionary)
-        """
-        self._mutual_information_estimator = mi_estimator
-        self._mi_method_kwargs = estimator_kwargs
-
 
     def change_method(self, method, **method_kwargs):
         """
