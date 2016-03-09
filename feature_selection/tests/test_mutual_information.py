@@ -9,15 +9,7 @@ import unittest
 import logging
 
 
-logger = logging.Logger('MI_testing')
-logger.setLevel(logging.DEBUG)
-
-fhandler = logging.FileHandler('MI_testing_log.txt', 'w')
-
-formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
-fhandler.setFormatter(formatter)
-
-logger.addHandler(fhandler)
+logger = logging.getLogger('MI_testing')
 
 try:
     MI_Toolbox = c.CDLL(sys.prefix + "/lib/libMIToolbox.so")
@@ -109,4 +101,10 @@ class TestMutualInformation(unittest.TestCase):
                 self.assertTrue(np.isclose(cond_mi_pyfeast, cond_mi_ours, rtol=0.01, atol=0.00001))
 
 if __name__ == "__main__":
+    formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+    fhandler = logging.FileHandler('MI_testing_log.txt', 'w')
+    fhandler.setFormatter(formatter)
+    logger.addHandler(fhandler)
+    logger.setLevel(logging.DEBUG)
+
     unittest.main()
