@@ -1,2 +1,2 @@
-cd "${SRC_DIR}/feature_selection/tests"
+cd "${SRC_DIR}/tests"
 nosetests .
