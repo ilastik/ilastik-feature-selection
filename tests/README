@@ -1,0 +1,4 @@
+The tests depend on the "PyFeast" library, which is GPLv3.
+Therefore, the tests are also distributed under the terms of GPLv3,
+and should not be distributed to end-users with the rest of the code,
+which is licensed under BSD.

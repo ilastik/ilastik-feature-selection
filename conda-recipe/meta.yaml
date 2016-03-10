@@ -6,7 +6,7 @@ source:
   git_url: ../
 
 build:
-  number: 2
+  number: 3
   string: py{{py}}_{{PKG_BUILDNUM}}_g{{GIT_FULL_HASH[:7]}}
 
 requirements:
@@ -26,5 +26,6 @@ test:
 
 about:
   home: https://bitbucket.org/FabianIsensee/feature_selection_clean
-  license: None
+  license: BSD
+  license_file: LICENSE
   summary: 'A Python library for selecting features during image classification.'
