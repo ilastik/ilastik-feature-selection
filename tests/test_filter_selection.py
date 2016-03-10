@@ -1,7 +1,7 @@
 __author__ = 'fabian'
 import sys
 import utils
-import feature_selection
+import ilastik_feature_selection
 import numpy as np
 import feast
 import mutual_information_old
@@ -61,7 +61,7 @@ class TestFilterFeatureSelection(unittest.TestCase):
         X, Y = utils.load_digits()
         X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
-        selector = feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "CIFE")
+        selector = ilastik_feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "CIFE")
         for i in range(X.shape[1]):
             for j in range(i+1, X.shape[1]):
                 X1 = np.array(X[:,i])
@@ -76,7 +76,7 @@ class TestFilterFeatureSelection(unittest.TestCase):
         X, Y = utils.load_digits()
         X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
-        selector = feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "CIFE")
+        selector = ilastik_feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "CIFE")
         num_feat = 10
         our_set = selector.run(num_feat)
         feast_set = np.array(feast.CIFE(X, Y, num_feat)).astype("int")
@@ -90,7 +90,7 @@ class TestFilterFeatureSelection(unittest.TestCase):
         X, Y = utils.load_digits()
         X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
-        selector = feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "JMI")
+        selector = ilastik_feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "JMI")
         num_feat = 10
         our_set = selector.run(num_feat)
         feast_set = np.array(feast.JMI(X, Y, num_feat)).astype("int")
@@ -103,7 +103,7 @@ class TestFilterFeatureSelection(unittest.TestCase):
         X, Y = utils.load_digits()
         X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
-        selector = feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "ICAP")
+        selector = ilastik_feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "ICAP")
         num_feat = 10
         our_set = selector.run(num_feat)
         feast_set = np.array(feast.ICAP(X, Y, num_feat)).astype("int")
@@ -116,7 +116,7 @@ class TestFilterFeatureSelection(unittest.TestCase):
         X, Y = utils.load_digits()
         X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
-        selector = feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "CMIM")
+        selector = ilastik_feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "CMIM")
         num_feat = 10
         our_set = selector.run(num_feat)
         feast_set = np.array(feast.CMIM(X, Y, num_feat)).astype("int")
@@ -129,7 +129,7 @@ class TestFilterFeatureSelection(unittest.TestCase):
         X, Y = utils.load_digits()
         X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
-        selector = feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "MIFS")
+        selector = ilastik_feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "MIFS")
         num_feat = 10
         our_set = selector.run(num_feat)
         feast_set = np.array(feast.BetaGamma(X, Y, num_feat, 1.0, 0.0)).astype("int") # MIFS in feast is buggy
@@ -144,7 +144,7 @@ class TestFilterFeatureSelection(unittest.TestCase):
         X, Y = utils.load_digits()
         X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
-        selector = feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "mRMR")
+        selector = ilastik_feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "mRMR")
         num_feat = 10
         our_set = selector.run(num_feat)
         feast_set = np.array(feast.mRMR(X, Y, num_feat)).astype("int")
@@ -157,7 +157,7 @@ class TestFilterFeatureSelection(unittest.TestCase):
         X, Y = utils.load_digits()
         X = mutual_information_old.normalize_data_for_MI(X)
         X = X.astype("float64")
-        selector = feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "mRMR")
+        selector = ilastik_feature_selection.filter_feature_selection.FilterFeatureSelection(X, Y, "mRMR")
         num_feat = 10
         our_set = selector.run(num_feat)
         feast_set = np.array(feast.ICAP(X, Y, num_feat)).astype("int")

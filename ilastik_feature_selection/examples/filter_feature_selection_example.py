@@ -1,6 +1,6 @@
 __author__ = 'fabian'
 
-import feature_selection
+import ilastik_feature_selection
 from sklearn import datasets
 import numpy as np
 

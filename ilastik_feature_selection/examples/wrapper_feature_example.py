@@ -1,6 +1,6 @@
 __author__ = 'fabian'
 
-from feature_selection import wrapper_feature_selection
+from ilastik_feature_selection import wrapper_feature_selection
 from sklearn import ensemble
 from sklearn import datasets
 import numpy as np
