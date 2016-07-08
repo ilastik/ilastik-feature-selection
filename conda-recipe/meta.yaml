@@ -1,9 +1,15 @@
 package:
-  name: ilastik-feature-selection
-  version: "0.123"
+    name: ilastik-feature-selection
+
+  {% if GIT_DESCRIBE_NUMBER|int == 0 %}
+    version: "{{GIT_DESCRIBE_TAG}}"
+  {% else %}
+    # If we're using a non-tagged revision, append '.postN' to the version
+    version: "{{GIT_DESCRIBE_TAG}}.post{{GIT_DESCRIBE_NUMBER}}"
+  {% endif %}
 
 source:
-  git_url: ../
+  path: ../
 
 build:
   number: 0
