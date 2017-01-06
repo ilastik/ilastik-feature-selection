@@ -4,7 +4,7 @@ __author__ = 'fabian'
 import numpy as np
 
 def normalize_data_for_MI(X):
-    for i in xrange(X.shape[1]):
+    for i in range(X.shape[1]):
         std = X[:, i].std()
         if std != 0.:
             X[:, i] /= std

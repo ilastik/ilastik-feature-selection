@@ -28,9 +28,9 @@ def load_digits():
 
 def kfold_train_and_predict(X, Y, classifier, k = 5, indices = None, features = None):
     if indices is None:
-        indices = np.array(range(X.shape[0]))
+        indices = np.array(list(range(X.shape[0])))
     if features is None:
-        features = np.array(range(X.shape[1]))
+        features = np.array(list(range(X.shape[1])))
     kf = cross_validation.KFold(len(indices), n_folds=k)
     accurs = []
     for train, test in kf:

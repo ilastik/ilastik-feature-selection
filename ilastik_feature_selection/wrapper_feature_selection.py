@@ -41,9 +41,9 @@ class EvaluationFunction(object):
         :return: returns tuple of mean accuracy and standard deviation of the accuracy across the cross-validation runs
         """
         if indices is None:
-            indices = np.array(range(X.shape[0]))
+            indices = np.array(list(range(X.shape[0])))
         if features is None:
-            features = np.array(range(X.shape[1]))
+            features = np.array(list(range(X.shape[1])))
         features = np.array(list(features))
         kf = cross_validation.KFold(len(indices), n_folds=k)
         accurs = []

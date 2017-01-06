@@ -39,12 +39,12 @@ def select_features_digits():
 
     # here are the different wrapper methods that are implemented in the FeatureSelection class
 
-    print "SFS: ", selected_features_SFS
-    print "SFFS: ", selected_features_SFFS
-    print "SBE: ", selected_features_SBE
-    print "SBFE: ", selected_features_SBFE
-    print "BFS: ", selected_features_BFS
-    print "BFSc: ", selected_features_BFSc
+    print("SFS: ", selected_features_SFS)
+    print("SFFS: ", selected_features_SFFS)
+    print("SBE: ", selected_features_SBE)
+    print("SBFE: ", selected_features_SBFE)
+    print("BFS: ", selected_features_BFS)
+    print("BFSc: ", selected_features_BFSc)
 
 
 if __name__ == "__main__":

@@ -37,7 +37,7 @@ class FilterFeatureSelection(object):
         self._n_features = X.shape[1]
 
         def normalize_data_for_MI(X):
-            for i in xrange(X.shape[1]):
+            for i in range(X.shape[1]):
                 std = X[:, i].std()
                 if std != 0.:
                     X[:, i] /= std
@@ -72,8 +72,8 @@ class FilterFeatureSelection(object):
 
         :param method: string indicating the desired criterion
         """
-        if method not in self._methods.keys():
-            raise ValueError("method must be one of the following: %s"%str(self._methods.keys()))
+        if method not in list(self._methods.keys()):
+            raise ValueError("method must be one of the following: %s"%str(list(self._methods.keys())))
         self._method = self._methods[method]
         self._method_str = method
         self._filter_criterion_kwargs = method_kwargs
@@ -82,14 +82,14 @@ class FilterFeatureSelection(object):
         """
         Prints the currently selected criterion
         """
-        print self._method
+        print(self._method)
 
     def get_available_methods(self):
         """
         Returns the implemented criteria as strings
         :return: list of strings containing the implemented criteria
         """
-        return self._methods.keys()
+        return list(self._methods.keys())
 
     def _calculate_class_conditional_MI(self, X1, X2, Y):
         states = np.unique(Y)
