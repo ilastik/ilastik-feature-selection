@@ -28,9 +28,16 @@ requirements:
     - scikit-learn
 
 test:
-  requires:
-    - nose
-    - pyfeast
+  # # the test section here doesn't work, as the tests require pyfeast
+  # # which is not python3, and not available via conda
+  # requires:
+  #   - nose
+  #   - pyfeast
+# don't
+  # commands:
+    # - nosetests --where=./tests
+  imports:
+    - ilastik_feature_selection
 
 about:
   home: https://bitbucket.org/FabianIsensee/feature_selection_clean
