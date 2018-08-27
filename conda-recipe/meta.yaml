@@ -13,24 +13,31 @@ source:
 
 build:
   number: 0
-  string: py{{py}}_{{PKG_BUILDNUM}}_g{{GIT_FULL_HASH[:7]}}
+  noarch: python
+  string: py_{{PKG_BUILDNUM}}_g{{GIT_FULL_HASH[:7]}}
+  script: python -m pip install --no-deps --ignore-installed .
 
 requirements:
-  build:
-    - python 2.7*  # [py2k]
-    - python >=3.5 # [py3k]
-    - setuptools
+  host:
+    - python >=3
+    - pip
   
   run:
-    - python 2.7*  # [py2k]
-    - python >=3.5 # [py3k]
+    - python
     - numpy
     - scikit-learn
 
 test:
-  requires:
-    - nose
-    - pyfeast
+  # # the test section here doesn't work, as the tests require pyfeast
+  # # which is not python3, and not available via conda
+  # requires:
+  #   - nose
+  #   - pyfeast
+# don't
+  # commands:
+    # - nosetests --where=./tests
+  imports:
+    - ilastik_feature_selection
 
 about:
   home: https://bitbucket.org/FabianIsensee/feature_selection_clean

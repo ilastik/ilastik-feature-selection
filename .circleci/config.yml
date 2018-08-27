@@ -1,0 +1,43 @@
+version: 2
+## Customize the test machine
+jobs:
+  build:
+    # Add some environment variables
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CONDA_ROOT: /home/ubuntu/miniconda
+    docker:
+    - image: circleci/build-image:ubuntu-14.04-XXL-upstart-1189-5614f37
+      command: /sbin/init
+    steps:
+    - run: echo 'export PATH=${CONDA_ROOT}/bin:${PATH}' >> $BASH_ENV
+    - checkout
+    ## Circle-ci checks out a "shallow" copy of the git repo,
+    ## but conda-build can't handle that.
+    ## Make it a full repo first.
+    ## (The source is cached, so it might not really be shallow.
+    ## Ignore errors from git in that case.)
+    - run: git fetch --unshallow || true
+    - restore_cache:
+        keys:
+        # This branch if available
+        - v0.dep-{{ .Branch }}-
+        # Default branch if not
+        - v0.dep-dep-master-
+        # Any branch if there are none on the default branch - this should be unnecessary if you have your default branch configured correctly
+        - v0.dep-
+    - run: |
+        if [[ ! -d ${CONDA_ROOT} ]]; then
+            echo "Installing Miniconda...";
+            wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh;
+            bash Miniconda3-latest-Linux-x86_64.sh -b -p ${CONDA_ROOT};
+            conda install -y conda-build;
+        else
+            echo "Using cached Miniconda install";
+        fi
+    - save_cache:
+        key: v0.dep-{{ .Branch }}-{{ epoch }}
+        paths:
+        - /home/ubuntu/miniconda
+    - run: conda build -c ilastik-forge -c conda-forge conda-recipe
