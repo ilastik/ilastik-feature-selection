@@ -1,9 +1,7 @@
 __author__ = 'fabian'
-import sklearn
 import numpy as np
 from sklearn import datasets
-from sklearn import ensemble
-from sklearn import cross_validation
+from sklearn import model_selection
 
 
 def load_iris():
@@ -31,7 +29,7 @@ def kfold_train_and_predict(X, Y, classifier, k = 5, indices = None, features = 
         indices = np.array(list(range(X.shape[0])))
     if features is None:
         features = np.array(list(range(X.shape[1])))
-    kf = cross_validation.KFold(len(indices), n_folds=k)
+    kf = model_selection.KFold(n_splits=k)
     accurs = []
     for train, test in kf:
         train_ind = indices[train].astype("int")
