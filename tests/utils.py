@@ -31,7 +31,7 @@ def kfold_train_and_predict(X, Y, classifier, k = 5, indices = None, features = 
         features = np.array(list(range(X.shape[1])))
     kf = model_selection.KFold(n_splits=k)
     accurs = []
-    for train, test in kf:
+    for train, test in kf.split(indices):
         train_ind = indices[train].astype("int")
         test_ind = indices[test].astype("int")
 

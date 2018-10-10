@@ -1,12 +1,9 @@
 __author__ = 'fabian'
-import sys
-import utils
 import numpy as np
 import ilastik_feature_selection
-import sklearn
+import sklearn.ensemble
 import unittest
 import os
-import logging
 
 class TestWrapperMethod(unittest.TestCase):
     def test_wrapper_BFS_no_adv(self):

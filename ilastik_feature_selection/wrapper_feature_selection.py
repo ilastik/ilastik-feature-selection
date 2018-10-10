@@ -46,7 +46,7 @@ class EvaluationFunction(object):
         features = np.array(list(features))
         kf = model_selection.KFold(n_splits=k)
         accurs = []
-        for train, test in kf:
+        for train, test in kf.split(indices):
             train_ind = indices[train].astype("int")
             test_ind = indices[test].astype("int")
 
