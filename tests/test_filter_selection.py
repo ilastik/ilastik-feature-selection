@@ -3,11 +3,11 @@ import sys
 import utils
 import ilastik_feature_selection
 import numpy as np
-import feast
 import mutual_information_old
 import unittest
 import logging
 import ctypes as c
+import pytest
 
 logger = logging.getLogger(__name__)
 
@@ -20,10 +20,27 @@ logger = logging.getLogger(__name__)
 # fhandler.setFormatter(formatter)
 #
 # logger.addHandler(fhandler)
+
+have_MI_Toolbox = True
+
 try:
     MI_Toolbox = c.CDLL(sys.prefix + "/lib/libMIToolbox.so")
-except:
-    MI_Toolbox = c.CDLL("libMIToolbox.so")
+except OSError:
+    try:
+        MI_Toolbox = c.CDLL("libMIToolbox.so")
+    except OSError:
+        have_MI_Toolbox = False
+
+have_feast = True
+
+try:
+    import feast
+except ImportError:
+    have_feast = False
+
+
+if (not have_MI_Toolbox) or (not have_feast):
+    pytest.skip("requires libMIToolbox.so and feast", allow_module_level=True)
 
 
 class TestFilterFeatureSelection(unittest.TestCase):
@@ -167,6 +184,3 @@ class TestFilterFeatureSelection(unittest.TestCase):
         logger.debug("ours\t%s"%str(our_set))
         logger.debug("feast\t%s"%str(feast_set))
         self.assertEqual(set(our_set), set(feast_set))
-
-if __name__ == "__main__":
-    unittest.main()

@@ -7,14 +7,25 @@ import mutual_information_old
 import utils
 import unittest
 import logging
+import pytest
 
 
 logger = logging.getLogger('MI_testing')
 
+have_MI_Toolbox = True
+
 try:
     MI_Toolbox = c.CDLL(sys.prefix + "/lib/libMIToolbox.so")
-except:
-    MI_Toolbox = c.CDLL("libMIToolbox.so")
+except OSError:
+    try:
+        MI_Toolbox = c.CDLL("libMIToolbox.so")
+    except OSError:
+        have_MI_Toolbox = False
+
+
+if not have_MI_Toolbox:
+    pytest.skip("requires libMIToolbox.so (feast)", allow_module_level=True)
+
 
 class TestMutualInformation(unittest.TestCase):
     def __calculate_MI(self, data_0, data_1):
