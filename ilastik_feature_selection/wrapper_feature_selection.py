@@ -2,8 +2,7 @@ __author__ = 'fabian'
 
 # import IPython
 import numpy as np
-import sklearn
-from sklearn import cross_validation
+from sklearn import model_selection
 import logging
 
 logger = logging.getLogger(__name__)
@@ -45,9 +44,9 @@ class EvaluationFunction(object):
         if features is None:
             features = np.array(list(range(X.shape[1])))
         features = np.array(list(features))
-        kf = cross_validation.KFold(len(indices), n_folds=k)
+        kf = model_selection.KFold(n_splits=k)
         accurs = []
-        for train, test in kf:
+        for train, test in kf.split(indices):
             train_ind = indices[train].astype("int")
             test_ind = indices[test].astype("int")
 
