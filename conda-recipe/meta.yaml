@@ -12,14 +12,14 @@ source:
   path: ../
 
 build:
-  number: 1000
+  number: 0
   noarch: python
   string: py_{{PKG_BUILDNUM}}_g{{GIT_FULL_HASH[:7]}}
   script: python -m pip install --no-deps --ignore-installed .
 
 requirements:
   host:
-    - python >=3
+    - python >=3.6
     - pip
   
   run:
