@@ -11,9 +11,29 @@ generated using the same methods as in the tests!
 __author__ = 'fabian'
 import numpy as np
 import ilastik_feature_selection
-import sklearn.ensemble
+import vigra
 import os
+from sklearn.metrics import accuracy_score
 import pytest
+
+
+class VigraRFwRandomState(vigra.learning.RandomForest):
+    """
+    Adaptor class that exposes an interface more similar to sklearn.ensemble.RandomForestClassifier
+    which is expected in wrapper_selection.
+    """
+    def __init__(self, *args, random_state=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._random_state = random_state
+
+    def fit(self, X, y):
+        return self.learnRF(X, y, self._random_state if self._random_state else 0)
+
+    def score(self, X, y, sample_weight=None) -> float:
+        """
+        evaluates X and returns mean accuracy wrt y
+        """
+        return accuracy_score(y, self.predictLabels(X), sample_weight=sample_weight)
 
 
 @pytest.fixture(scope='module')
@@ -21,13 +41,13 @@ def digit_data():
     test_path = os.path.dirname(os.path.realpath(__file__))
     digits_X = np.load(test_path + "/digits_data.npy")
     digits_Y = np.load(test_path + "/digits_target.npy")
-    return digits_X, digits_Y
+    return digits_X.astype("float32"), digits_Y.astype("uint32")[..., np.newaxis]
 
 
 # Note: added random state in order to conform with the old tests. Maybe we
 # should remove that, have all in the same random state.
 @pytest.mark.parametrize('method, advanced_search, random_state, expected', [
-    ('BFS', False, 14271, (set([5, 20, 21, 27, 30, 34, 36, 38, 43, 44, 47]), 1.20525)),
+    ('BFS', False, 14271, (set([9, 13, 20, 21, 27, 34, 36, 38, 42, 43, 50, 57, 58, 60]), 1.20525)),
     ('BFS', True, 14271, (set([18, 20, 21, 27, 30, 34, 42, 43, 44, 54, 61]), 1.20925)),
     ('SFS', False, 1275, (set([10, 13, 21, 26, 27, 28, 35, 38, 42, 44, 54]), 1.20525)),
     ('SFS', True, 1275, (set([10, 13, 21, 26, 27, 28, 35, 38, 42, 44, 54]), 1.20525)),
@@ -39,7 +59,7 @@ def digit_data():
 ])
 def test_wrapper(digit_data, method, advanced_search, random_state, expected):
     X, Y = digit_data
-    rf = sklearn.ensemble.RandomForestClassifier(random_state=random_state, n_estimators=10)
+    rf = VigraRFwRandomState(random_state=random_state, treeCount=10)
     eval_fct = ilastik_feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
     feat_selector = ilastik_feature_selection.wrapper_feature_selection.WrapperFeatureSelection(
         X, Y, eval_fct.evaluate_feature_set_size_penalty, method=method)
@@ -52,7 +72,7 @@ def test_wrapper(digit_data, method, advanced_search, random_state, expected):
 
 def test_initial_set(digit_data):
     X, Y = digit_data
-    rf = sklearn.ensemble.RandomForestClassifier(random_state=1275, n_estimators=10)
+    rf = VigraRFwRandomState(random_state=1275, treeCount=10)
 
     eval_fct = ilastik_feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
     feat_selector = ilastik_feature_selection.wrapper_feature_selection.WrapperFeatureSelection(
@@ -74,7 +94,7 @@ def test_initial_set(digit_data):
 
 def test_permitted_features(digit_data):
     X, Y = digit_data
-    rf = sklearn.ensemble.RandomForestClassifier(n_estimators=10)
+    rf = VigraRFwRandomState(treeCount=10)
 
     eval_fct = ilastik_feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
     feat_selector = ilastik_feature_selection.wrapper_feature_selection.WrapperFeatureSelection(
@@ -91,7 +111,7 @@ def test_permitted_features(digit_data):
 
 def test_mandatory_features(digit_data):
     X, Y = digit_data
-    rf = sklearn.ensemble.RandomForestClassifier(n_estimators=10)
+    rf = VigraRFwRandomState(treeCount=10)
 
     eval_fct = ilastik_feature_selection.wrapper_feature_selection.EvaluationFunction(rf, complexity_penalty=0.4)
     feat_selector = ilastik_feature_selection.wrapper_feature_selection.WrapperFeatureSelection(
