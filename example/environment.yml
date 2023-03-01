@@ -1,0 +1,9 @@
+channels:
+  - ilastik-forge
+  - conda-forge
+dependencies:
+  - python
+  - jupyter
+  - notebook
+  - seaborn
+  - ilastik-feature-selection
