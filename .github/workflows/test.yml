@@ -1,0 +1,39 @@
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-w-conda-recipe:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: true
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: true
+          activate-environment: ""
+          channel-priority: strict
+          miniforge-variant: Mambaforge
+          use-mamba: true
+      - name: install common dependencies
+        run: mamba install -n base -c conda-forge conda-build boa -y
+      - name: linux conda build
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash -l {0}
+        run: conda mambabuild -c conda-forge conda-recipe
+      - name: osx conda build
+        if: matrix.os == 'macos-latest'
+        shell: bash -l {0}
+        run:  conda mambabuild -c conda-forge conda-recipe
+      - name: windows conda build
+        if: matrix.os == 'windows-latest'
+        shell: cmd /C CALL {0}
+        run: conda mambabuild -c conda-forge conda-recipe
