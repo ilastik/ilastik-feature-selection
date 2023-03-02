@@ -1,0 +1,10 @@
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python
+  - pytest
+  - scikit-learn 0.18.*
+  # - feast
+  - pandas
+  - scipy
