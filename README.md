@@ -4,13 +4,16 @@ A Python library for selecting features in classification.
 Used in ilastik's [Suggest Features functionality](https://www.ilastik.org/documentation/pixelclassification/pixelclassification#suggest).
 
 [![.github/workflows/test.yml](https://github.com/ilastik/ilastik-feature-selection/actions/workflows/test.yml/badge.svg)](https://github.com/ilastik/ilastik-feature-selection/actions/workflows/test.yml)
+![
+https://anaconda.org/conda-forge/ilastik-feature-selection/badges/version.svg](
+https://anaconda.org/conda-forge/ilastik-feature-selection/badges/version.svg)
 
 ## Installation
 
 We recommend `conda`/`mamba` to install this package:
 
 ```bash
-mamba create -n feature-selection -c ilastik-forge -c conda-forge ilastik-feature-selection
+mamba create -n feature-selection -c conda-forge ilastik-feature-selection
 ```
 
 ## Usage
